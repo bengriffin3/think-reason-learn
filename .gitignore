@@ -57,4 +57,7 @@ experiments/
 pyrightconfig.json
 examples/*
 !examples/**/*.ipynb
+!examples/vcbench_lambda_features_minimal.py
+!examples/vcbench_reasoned_features.py
+!examples/README_vcbench_minimal_examples.md
 .private/
