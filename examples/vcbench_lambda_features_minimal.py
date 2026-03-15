@@ -2,7 +2,7 @@
 
 Compares three feature-engineering approaches on VCBench founder profiles:
 
-- ``human``    — 7 hand-crafted binary features (no API key needed)
+- ``human``    — 15 hand-crafted binary features (no API key needed)
 - ``llm``      — LLM-generated Python lambda features
 - ``combined`` — both stacked together (default)
 
@@ -51,8 +51,15 @@ from think_reason_learn.features import FeatureEvaluator, FeatureGenerator
 # ---------------------------------------------------------------------------
 # Human-engineered baseline features
 # ---------------------------------------------------------------------------
-# Seven binary features a human analyst would try first — no LLM involved,
+# Fifteen binary features a human analyst would try first — no LLM involved,
 # just domain intuition.  Interns: read, understand, and extend these!
+#
+# Extension ideas for your own EDA:
+# - has_masters: any non-MBA master's degree
+# - self_employed: any job at a "self-employed" company
+# - business_role: sales/marketing/BD/operations role
+# - diverse_industries: worked in 3+ different job industries
+# - top_100_university: QS ranking ≤ 100 (broader net than top_university)
 
 _SENIOR_ROLES = {
     "ceo",
@@ -67,12 +74,30 @@ _SENIOR_ROLES = {
     "vice president",
 }
 
+_STEM_KEYWORDS = {
+    "computer",
+    "engineer",
+    "math",
+    "physics",
+    "biology",
+    "chemistry",
+    "science",
+    "statistics",
+    "electrical",
+    "mechanical",
+}
+
+_FOUNDER_KEYWORDS = {"founder", "co-founder", "cofounder"}
+
+_TECH_ROLE_KEYWORDS = {"engineer", "developer", "cto", "technical"}
+
 
 def _extract_human_features(record: dict[str, Any]) -> dict[str, int]:
-    """Extract 7 hand-crafted binary features from one founder record."""
+    """Extract 15 hand-crafted binary features from one founder record."""
     educations = record.get("educations", [])
     jobs = record.get("jobs", [])
 
+    # --- Education (4 features) ---
     top_univ = int(any(parse_qs(e.get("qs_ranking", "")) <= 50 for e in educations))
     has_phd = int(
         any(
@@ -81,29 +106,86 @@ def _extract_human_features(record: dict[str, Any]) -> dict[str, int]:
             for e in educations
         )
     )
-    prior_exit = int(
-        len(record.get("ipos", [])) + len(record.get("acquisitions", [])) > 0
+    has_mba = int(
+        any(
+            "mba" in e.get("degree", "").lower()
+            or (
+                "master" in e.get("degree", "").lower()
+                and any(
+                    kw in e.get("field", "").lower()
+                    for kw in ("business", "management", "administration")
+                )
+            )
+            for e in educations
+        )
     )
+    stem_degree = int(
+        any(
+            any(kw in e.get("field", "").lower() for kw in _STEM_KEYWORDS)
+            for e in educations
+        )
+    )
+
+    # --- Career (6 features) ---
     senior = int(
         any(any(kw in j.get("role", "").lower() for kw in _SENIOR_ROLES) for j in jobs)
     )
     large_co = int(
         any(parse_company_size(j.get("company_size", "")) >= 1000 for j in jobs)
     )
-    startup = int(
+    startup_exp = int(
         any(0 < parse_company_size(j.get("company_size", "")) <= 50 for j in jobs)
     )
     total_yrs = sum(parse_duration(j.get("duration", "")) for j in jobs)
     long_exp = int(total_yrs > 5.0)
+    serial_founder = int(
+        sum(
+            1
+            for j in jobs
+            if any(kw in j.get("role", "").lower() for kw in _FOUNDER_KEYWORDS)
+        )
+        >= 2
+    )
+    technical_role = int(
+        any(
+            any(kw in j.get("role", "").lower() for kw in _TECH_ROLE_KEYWORDS)
+            for j in jobs
+        )
+    )
+    many_prior_roles = int(len(jobs) >= 4)
+    short_tenure = int(
+        len(jobs) > 0
+        and sum(1 for j in jobs if j.get("duration") == "<2") > len(jobs) / 2
+    )
+
+    # --- Industry match (1 feature) ---
+    startup_industry = record.get("industry", "").lower()
+    industry_match = int(
+        bool(startup_industry)
+        and any(startup_industry in j.get("industry", "").lower() for j in jobs)
+    )
+
+    # --- Exits (2 features) ---
+    n_exits = len(record.get("ipos", [])) + len(record.get("acquisitions", []))
+    prior_exit = int(n_exits > 0)
+    multiple_exits = int(n_exits >= 2)
 
     return {
         "top_university": top_univ,
         "has_phd": has_phd,
+        "has_mba": has_mba,
+        "stem_degree": stem_degree,
         "prior_exit": prior_exit,
+        "multiple_exits": multiple_exits,
         "senior_leadership": senior,
         "large_company_exp": large_co,
-        "startup_exp": startup,
+        "startup_exp": startup_exp,
         "long_experience": long_exp,
+        "serial_founder": serial_founder,
+        "technical_role": technical_role,
+        "many_prior_roles": many_prior_roles,
+        "short_tenure_pattern": short_tenure,
+        "industry_match": industry_match,
     }
 
 

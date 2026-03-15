@@ -28,7 +28,7 @@ Compares three feature-engineering approaches:
 
 | Mode | Description | API key? | Cost |
 |------|-------------|----------|------|
-| `human` | 7 hand-crafted binary features | No | Free |
+| `human` | 15 hand-crafted binary features | No | Free |
 | `llm` | LLM-generated Python lambda features | Yes | ~$0.01 |
 | `combined` | Both stacked together (default) | Yes | ~$0.01 |
 
@@ -45,17 +45,42 @@ python examples/vcbench_lambda_features_minimal.py \
     --input_csv /path/to/vcbench_final_public.csv --n_features 8
 ```
 
-### Human-engineered features
+### Human-engineered features (15 total)
+
+**Education (4):**
 
 | Feature | Logic |
 |---------|-------|
 | `top_university` | Attended a top-50 QS-ranked university |
 | `has_phd` | Holds a PhD or doctorate |
-| `prior_exit` | Involved in a prior IPO or acquisition |
+| `has_mba` | Holds an MBA or master's in business/management |
+| `stem_degree` | Studied a STEM field (CS, engineering, math, sciences) |
+
+**Career (7):**
+
+| Feature | Logic |
+|---------|-------|
 | `senior_leadership` | Held a C-suite, founder, or VP role |
 | `large_company_exp` | Worked at a company with >= 1000 employees |
 | `startup_exp` | Worked at a company with <= 50 employees |
 | `long_experience` | Total work experience > 5 years |
+| `serial_founder` | Held "founder" roles at 2+ different companies |
+| `technical_role` | Held an engineering/developer/CTO role |
+| `many_prior_roles` | 4+ prior roles (breadth of experience) |
+| `short_tenure_pattern` | Majority of jobs lasted < 2 years |
+
+**Industry fit (1):**
+
+| Feature | Logic |
+|---------|-------|
+| `industry_match` | A prior job's industry matches the startup's industry |
+
+**Exits (2):**
+
+| Feature | Logic |
+|---------|-------|
+| `prior_exit` | Involved in at least one prior IPO or acquisition |
+| `multiple_exits` | Involved in 2+ prior exits |
 
 ---
 
