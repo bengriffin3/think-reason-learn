@@ -9,6 +9,7 @@ import pytest
 import pandas as pd
 
 from think_reason_learn.rrf import RRF, QuestionExclusion
+from think_reason_learn.rrf import _rrf as rrf_mod
 from think_reason_learn.rrf._rrf import Questions, Answer
 from think_reason_learn.core.llms import LLMChoice, OpenAIChoice
 from think_reason_learn.core.exceptions import DataError
@@ -2556,3 +2557,51 @@ class TestElasticNetAggregation:
         assert loaded._aggregation_intercept == rrf._aggregation_intercept
         assert loaded._aggregation_threshold == rrf._aggregation_threshold
         assert loaded._aggregation_feature_order == rrf._aggregation_feature_order
+
+
+class TestElasticNetSklearnCompat:
+    """LogisticRegressionCV kwargs must track the sklearn 1.8 API changes.
+
+    sklearn 1.8 deprecated ``penalty`` (removal in 1.10; elastic-net is
+    requested via ``l1_ratios`` alone) and warns on fit unless
+    ``use_legacy_attributes`` is set explicitly.
+    """
+
+    def _captured_lrcv_kwargs(
+        self, monkeypatch: pytest.MonkeyPatch, pre_18: bool
+    ) -> dict[str, Any]:
+        captured: dict[str, Any] = {}
+
+        class _StubLRCV:
+            def __init__(self, **kwargs: Any) -> None:
+                captured.update(kwargs)
+                self.coef_ = np.array([[1.0, 0.0, -1.0]])
+                self.intercept_ = np.array([0.0])
+
+            def fit(self, x: Any, y: Any) -> _StubLRCV:
+                return self
+
+            def predict_proba(self, x: Any) -> np.ndarray:
+                return np.tile([0.4, 0.6], (len(x), 1))
+
+        monkeypatch.setattr(rrf_mod, "LogisticRegressionCV", _StubLRCV)
+        monkeypatch.setattr(rrf_mod, "_SKLEARN_PRE_1_8", pre_18, raising=False)
+        rrf, _ = _enet_rrf()
+        rrf._tune_aggregation()
+        return captured
+
+    def test_pre_18_passes_elasticnet_penalty(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        kwargs = self._captured_lrcv_kwargs(monkeypatch, pre_18=True)
+        assert kwargs["penalty"] == "elasticnet"
+        assert kwargs["l1_ratios"] == [0.1, 0.5]
+        assert "use_legacy_attributes" not in kwargs
+
+    def test_sklearn_18_omits_deprecated_penalty(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        kwargs = self._captured_lrcv_kwargs(monkeypatch, pre_18=False)
+        assert "penalty" not in kwargs
+        assert kwargs["l1_ratios"] == [0.1, 0.5]
+        assert kwargs["use_legacy_attributes"] is False
