@@ -35,6 +35,7 @@ import numpy.typing as npt
 import orjson
 import pandas as pd
 from pydantic import BaseModel, Field
+from sklearn import __version__ as _sklearn_version
 from sklearn.linear_model import LogisticRegressionCV
 
 from think_reason_learn.core.exceptions import CorruptionError, DataError, LLMError
@@ -51,6 +52,10 @@ from ._prompts import (
 from ._types import AnsSimilarityFunc, EmbeddingModel
 
 logger = logging.getLogger(__name__)
+
+# sklearn 1.8 deprecated LogisticRegressionCV's `penalty` (removal in 1.10):
+# elastic-net is now requested via `l1_ratios` alone.
+_SKLEARN_PRE_1_8 = tuple(int(p) for p in _sklearn_version.split(".")[:2]) < (1, 8)
 
 
 class Questions(BaseModel):
@@ -1566,18 +1571,25 @@ class RRF:
             )
             return
 
-        model = LogisticRegressionCV(
-            penalty="elasticnet",
-            solver="saga",
-            Cs=list(self.elasticnet_cs),  # type: ignore[arg-type]
-            l1_ratios=list(self.elasticnet_l1_ratios),
-            cv=self.elasticnet_cv,
-            scoring="roc_auc",
-            max_iter=5000,
-            random_state=self.random_state,
-            n_jobs=1,
-            refit=True,
-        )
+        lrcv_kwargs: Dict[str, Any] = {
+            "solver": "saga",
+            "Cs": list(self.elasticnet_cs),
+            "l1_ratios": list(self.elasticnet_l1_ratios),
+            "cv": self.elasticnet_cv,
+            "scoring": "roc_auc",
+            "max_iter": 5000,
+            "random_state": self.random_state,
+            "n_jobs": 1,
+            "refit": True,
+        }
+        if _SKLEARN_PRE_1_8:
+            # Pre-1.8, l1_ratios is only applied when penalty="elasticnet".
+            lrcv_kwargs["penalty"] = "elasticnet"
+        else:
+            # Opt in to the simplified fitted attributes to silence the 1.8
+            # FutureWarning; only coef_/intercept_/predict_proba are read here.
+            lrcv_kwargs["use_legacy_attributes"] = False
+        model = LogisticRegressionCV(**lrcv_kwargs)
         model.fit(x, y_true)
         proba = model.predict_proba(x)[:, 1]
 
