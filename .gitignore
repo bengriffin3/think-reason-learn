@@ -57,6 +57,12 @@ experiments/
 pyrightconfig.json
 examples/*
 !examples/**/*.ipynb
+!examples/vcbench-movie-local/
+!examples/vcbench-movie-local/**
+examples/vcbench-movie-local/**/__pycache__/
+examples/vcbench-movie-local/**/llm_cache*.jsonl
+examples/vcbench-movie-local/**/raw_responses*.jsonl
+examples/vcbench-movie-local/**/*.log
 .private/
 
 vcbench/*
