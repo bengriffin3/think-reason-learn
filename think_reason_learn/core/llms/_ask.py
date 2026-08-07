@@ -27,7 +27,11 @@ class LLM(metaclass=SingletonMeta):
     def __init__(self) -> None:
         self.anthropic_llm = get_anthropic_llm(settings.ANTHROPIC_API_KEY)
         self.google_llm = get_google_llm(settings.GOOGLE_AI_API_KEY)
-        self.openai_llm = get_openai_llm(settings.OPENAI_API_KEY)
+        self.openai_llm = get_openai_llm(
+            settings.OPENAI_API_KEY,
+            base_url=settings.OPENAI_BASE_URL or None,
+            endpoint_style=settings.OPENAI_ENDPOINT_STYLE or None,
+        )
         self.xai_llm = get_xai_llm(settings.XAI_API_KEY)
 
     def _val_llm_priority_and_api_keys(

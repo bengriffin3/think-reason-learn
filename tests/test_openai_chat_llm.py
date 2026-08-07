@@ -262,3 +262,44 @@ def test_chat_structured_output_async():
     assert result is not None
     assert result.response is parsed
     assert result.logprobs == [("no", -0.3)]
+
+
+def test_settings_read_base_url_and_endpoint_style_from_env(monkeypatch, tmp_path):
+    from think_reason_learn.core._config import Settings
+
+    monkeypatch.chdir(tmp_path)  # keep a developer .env file out of the picture
+    monkeypatch.setenv("OPENAI_BASE_URL", "http://localhost:11434/v1")
+    monkeypatch.setenv("OPENAI_ENDPOINT_STYLE", "chat_completions")
+
+    fresh = Settings()
+
+    assert fresh.OPENAI_BASE_URL == "http://localhost:11434/v1"
+    assert fresh.OPENAI_ENDPOINT_STYLE == "chat_completions"
+
+
+def test_settings_reject_invalid_endpoint_style(monkeypatch, tmp_path):
+    from pydantic import ValidationError
+
+    from think_reason_learn.core._config import Settings
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("OPENAI_ENDPOINT_STYLE", "grpc")
+
+    with pytest.raises(ValidationError):
+        Settings()
+
+
+def test_llm_wires_openai_base_url_from_settings(monkeypatch):
+    from think_reason_learn.core._config import settings
+    from think_reason_learn.core.llms._ask import LLM
+
+    monkeypatch.setattr(settings, "OPENAI_API_KEY", "")
+    monkeypatch.setattr(settings, "OPENAI_BASE_URL", "http://localhost:11434/v1")
+    monkeypatch.setattr(settings, "OPENAI_ENDPOINT_STYLE", "")
+    SingletonMeta._instances.pop(LLM, None)
+    try:
+        trl_llm = LLM()
+        assert trl_llm.openai_llm is not None
+        assert trl_llm.openai_llm.endpoint_style == "chat_completions"
+    finally:
+        SingletonMeta._instances.pop(LLM, None)

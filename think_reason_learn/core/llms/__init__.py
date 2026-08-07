@@ -24,6 +24,7 @@ from ._schemas import (
     TokenCounter,
     TokenCount,
 )
+from ._openai.schemas import OpenAIEndpointStyle
 from ._ask import LLM
 
 
@@ -51,6 +52,7 @@ __all__ = [
     "LLMChatModel",
     "LLMProvider",
     "OpenAIChatModel",
+    "OpenAIEndpointStyle",
     "GoogleChatModel",
     "AnthropicChatModel",
     "xAIChatModel",
