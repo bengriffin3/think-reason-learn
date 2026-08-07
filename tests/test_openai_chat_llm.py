@@ -206,6 +206,48 @@ def test_chat_string_response_async():
     assert result.logprobs == pairs
 
 
+def test_responses_path_still_used_without_base_url():
+    """Backward compat: no base_url means the /v1/responses path, unchanged."""
+    llm = OpenAILLM(api_key="sk-test")
+    llm.client = MagicMock()
+    fake = SimpleNamespace(output_text="cloud", usage=SimpleNamespace(total_tokens=3))
+    llm.client.responses.create = MagicMock(return_value=fake)
+
+    result = llm.respond_sync(model="gpt-5", query="Q", raise_=True)
+
+    assert result is not None
+    assert result.response == "cloud"
+    llm.client.responses.create.assert_called_once()
+    llm.client.chat.completions.create.assert_not_called()
+
+
+def test_dict_llm_priority_record_routes_to_chat_completions():
+    """Dict provider records (the GPTree trap) are normalized by LLM and
+    reach the chat-completions path intact."""
+    from think_reason_learn.core.llms._ask import LLM
+
+    trl_llm = LLM()
+    orig_openai = trl_llm.openai_llm
+    try:
+        chat_llm = _chat_llm()
+        chat_llm.client.chat.completions.create = MagicMock(
+            return_value=_fake_completion(content="local", logprob_pairs=[("l", -0.4)])
+        )
+        trl_llm.openai_llm = chat_llm
+
+        result = trl_llm.respond_sync(
+            query="Q",
+            llm_priority=[{"provider": "openai", "model": "qwen3:8b"}],
+            response_format=str,
+        )
+
+        assert result.response == "local"
+        assert result.logprobs == [("l", -0.4)]
+        chat_llm.client.chat.completions.create.assert_called_once()
+    finally:
+        trl_llm.openai_llm = orig_openai
+
+
 def test_chat_structured_output_async():
     llm = _chat_llm()
     parsed = _Verdict(answer="no", confident=False)
