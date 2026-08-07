@@ -1,5 +1,6 @@
 from typing import Type, Any, cast, Dict
 import logging
+import os
 
 from openai import AsyncOpenAI, OpenAI
 from openai.types.responses import Response
@@ -7,16 +8,27 @@ from pydantic import BaseModel
 
 from .._schemas import LLMResponse, T, OpenAIChoice
 from think_reason_learn.core._singleton import SingletonMeta
-from .schemas import OpenAIChatModel, NOT_GIVEN, NotGiven
+from .schemas import OpenAIChatModel, OpenAIEndpointStyle, NOT_GIVEN, NotGiven
 
 
 logger = logging.getLogger(__name__)
 
 
 class OpenAILLM(metaclass=SingletonMeta):
-    def __init__(self, api_key: str) -> None:
-        self.client = OpenAI(api_key=api_key)
-        self.aclient = AsyncOpenAI(api_key=api_key)
+    def __init__(
+        self,
+        api_key: str,
+        base_url: str | None = None,
+        endpoint_style: OpenAIEndpointStyle | None = None,
+        top_logprobs: int = 5,
+    ) -> None:
+        base_url = base_url or os.environ.get("OPENAI_BASE_URL") or None
+        self.client = OpenAI(api_key=api_key, base_url=base_url)
+        self.aclient = AsyncOpenAI(api_key=api_key, base_url=base_url)
+        self.endpoint_style: OpenAIEndpointStyle = endpoint_style or (
+            "chat_completions" if base_url else "responses"
+        )
+        self.top_logprobs = top_logprobs
 
     def _process_kwargs(self, kwargs: Dict[str, Any]) -> Dict[str, Any]:
         return {
@@ -129,5 +141,16 @@ class OpenAILLM(metaclass=SingletonMeta):
             return None
 
 
-def get_openai_llm(api_key: str) -> OpenAILLM | None:
-    return OpenAILLM(api_key) if api_key else None
+def get_openai_llm(
+    api_key: str,
+    base_url: str | None = None,
+    endpoint_style: OpenAIEndpointStyle | None = None,
+) -> OpenAILLM | None:
+    base_url = base_url or os.environ.get("OPENAI_BASE_URL") or None
+    if not api_key and base_url:
+        # Local OpenAI-compatible servers (Ollama, vLLM without --api-key)
+        # accept any non-empty key.
+        api_key = "ollama"
+    if not api_key:
+        return None
+    return OpenAILLM(api_key, base_url=base_url, endpoint_style=endpoint_style)
