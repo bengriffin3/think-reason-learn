@@ -123,6 +123,28 @@ async def main():
 asyncio.run(main())
 ```
 
+### Using a local model (Ollama, vLLM)
+
+The `openai` provider works against any OpenAI-compatible server. Point it at
+your local endpoint and pick your local model — no code changes needed:
+
+```bash
+export OPENAI_BASE_URL=http://localhost:11434/v1   # Ollama's default port
+export OPENAI_API_KEY=ollama                       # any non-empty value works locally
+```
+
+```python
+from think_reason_learn.core.llms import OpenAIChoice
+
+qgen_llmc = [OpenAIChoice(model="qwen3:8b")]  # any model served locally
+```
+
+When `OPENAI_BASE_URL` is set, TRL routes requests through
+`/v1/chat/completions` with token logprobs (which Reasoned Rule Mining
+depends on) instead of `/v1/responses`, which local servers don't implement.
+Set `OPENAI_ENDPOINT_STYLE` to `responses` or `chat_completions` to override
+the auto-detection.
+
 For more examples and detailed usage, see the [examples notebooks](https://github.com/Vela-Research/think-reason-learn/tree/main/examples).
 
 ## Contributing

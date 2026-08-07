@@ -94,7 +94,10 @@ class LLM(metaclass=SingletonMeta):
             **kwargs: Additional arguments to pass to the LLM. For:
 
                 - OpenAI: ``openai.OpenAI.responses.parse`` or
-                    ``openai.OpenAI.responses.create``.
+                    ``openai.OpenAI.responses.create`` — or the
+                    ``chat.completions`` equivalents when the provider's
+                    ``endpoint_style`` is ``"chat_completions"`` (e.g.
+                    against a local OpenAI-compatible server).
                 - Google: ``google.genai.types.GenerateContentConfig``.
                 - XAI: ``xai_sdk.Client.chat.create``.
                 - Anthropic: ``anthropic.Client.messages.create``.
@@ -211,7 +214,10 @@ class LLM(metaclass=SingletonMeta):
             **kwargs: Additional arguments to pass to the LLM. For:
 
                 - OpenAI: ``openai.OpenAI.responses.parse`` or
-                    ``openai.OpenAI.responses.create``.
+                    ``openai.OpenAI.responses.create`` — or the
+                    ``chat.completions`` equivalents when the provider's
+                    ``endpoint_style`` is ``"chat_completions"`` (e.g.
+                    against a local OpenAI-compatible server).
                 - Google: ``google.genai.types.GenerateContentConfig``.
                 - XAI: ``xai_sdk.Client.chat.create``.
                 - Anthropic: ``anthropic.Client.messages.create``.

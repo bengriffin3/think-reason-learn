@@ -80,4 +80,32 @@ GPTree
    for pred in predictions:
        print(pred)
 
+Using a local model (Ollama, vLLM, or any OpenAI-compatible server)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ``openai`` provider works against any server that implements the OpenAI
+chat-completions API. Point it at your local endpoint and pick your local
+model — no code changes needed:
+
+.. code-block:: bash
+
+   export OPENAI_BASE_URL=http://localhost:11434/v1   # Ollama's default port
+   export OPENAI_API_KEY=ollama                       # any non-empty value works locally
+
+.. code-block:: python
+
+   from think_reason_learn.core.llms import OpenAIChoice
+
+   qgen_llmc = [OpenAIChoice(model="qwen3:8b")]  # any model served locally
+
+When ``OPENAI_BASE_URL`` is set, requests are routed through
+``/v1/chat/completions`` with token logprobs enabled (Reasoned Rule Mining
+depends on ``response.logprobs``) instead of the ``/v1/responses`` endpoint,
+which local servers generally do not implement. The routing is controlled by
+the ``endpoint_style`` parameter of the OpenAI provider
+(``"responses"`` or ``"chat_completions"``) and auto-detected from the base
+URL when unset. Override it with the ``OPENAI_ENDPOINT_STYLE`` environment
+variable — for example, ``OPENAI_ENDPOINT_STYLE=chat_completions`` also gets
+token logprobs from OpenAI's hosted API.
+
 For more examples and comprehensive use cases, visit the `examples directory <https://github.com/vela-research/think-reason-learn/tree/main/examples>`_ on our GitHub repository.
