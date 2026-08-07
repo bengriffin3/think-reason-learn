@@ -1,4 +1,4 @@
-from typing import Type, Any, cast, Dict
+from typing import Type, Any, cast, Dict, List, Tuple
 import logging
 import os
 
@@ -30,12 +30,136 @@ class OpenAILLM(metaclass=SingletonMeta):
         )
         self.top_logprobs = top_logprobs
 
-    def _process_kwargs(self, kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    def _process_kwargs(self, kwargs: Dict[str, Any], method: Any) -> Dict[str, Any]:
         return {
             k: v if v else (None if v is None else NOT_GIVEN)
             for k, v in kwargs.items()
-            if k in self.client.responses.parse.__annotations__
+            if k in method.__annotations__
         }
+
+    @staticmethod
+    def _chat_messages(
+        query: str,
+        instructions: str | NotGiven | None,
+        kwargs: Dict[str, Any],
+    ) -> List[Dict[str, Any]]:
+        messages: List[Dict[str, Any]] = list(kwargs.pop("messages", None) or [])
+        if query and (not messages or messages[-1].get("role") != "user"):
+            messages.append({"role": "user", "content": query})
+        if instructions and not any(m.get("role") == "system" for m in messages):
+            messages.insert(0, {"role": "system", "content": instructions})
+        return messages
+
+    @staticmethod
+    def _extract_logprobs(choice: Any) -> List[Tuple[str, float | None]]:
+        logprobs = getattr(choice, "logprobs", None)
+        if logprobs and logprobs.content:
+            return [(t.token, t.logprob) for t in logprobs.content]
+        return []
+
+    def _respond_chat_sync(
+        self,
+        model: OpenAIChatModel,
+        query: str,
+        response_format: Type[T],
+        instructions: str | NotGiven | None,
+        temperature: float | NotGiven | None,
+        raise_: bool,
+        kwargs: Dict[str, Any],
+    ) -> LLMResponse[T] | None:
+        kwargs = self._process_kwargs(kwargs, self.client.chat.completions.create)
+        messages = self._chat_messages(query, instructions, kwargs)
+        kwargs.setdefault("logprobs", True)
+        kwargs.setdefault("top_logprobs", self.top_logprobs)
+
+        try:
+            if issubclass(response_format, BaseModel):
+                completion = self.client.chat.completions.parse(
+                    model=model,
+                    messages=messages,
+                    temperature=temperature,
+                    response_format=response_format,
+                    **kwargs,
+                )
+                choice = completion.choices[0]
+                response = cast(T, choice.message.parsed)
+            else:
+                completion = self.client.chat.completions.create(
+                    model=model,
+                    messages=messages,
+                    temperature=temperature,
+                    **kwargs,
+                )
+                choice = completion.choices[0]
+                response = cast(T, choice.message.content or "")
+
+            return LLMResponse(
+                response=response,
+                logprobs=self._extract_logprobs(choice),
+                total_tokens=(
+                    completion.usage.total_tokens if completion.usage else None
+                ),
+                provider_model=OpenAIChoice(model=model),
+            )
+        except Exception as e:
+            logger.warning(
+                f"Error responding with OpenAI (chat.completions): {e}", exc_info=True
+            )
+            if raise_:
+                raise e
+            return None
+
+    async def _respond_chat(
+        self,
+        model: OpenAIChatModel,
+        query: str,
+        response_format: Type[T],
+        instructions: str | NotGiven | None,
+        temperature: float | NotGiven | None,
+        raise_: bool,
+        kwargs: Dict[str, Any],
+    ) -> LLMResponse[T] | None:
+        kwargs = self._process_kwargs(kwargs, self.aclient.chat.completions.create)
+        messages = self._chat_messages(query, instructions, kwargs)
+        kwargs.setdefault("logprobs", True)
+        kwargs.setdefault("top_logprobs", self.top_logprobs)
+
+        try:
+            if issubclass(response_format, BaseModel):
+                completion = await self.aclient.chat.completions.parse(
+                    model=model,
+                    messages=messages,
+                    temperature=temperature,
+                    response_format=response_format,
+                    **kwargs,
+                )
+                choice = completion.choices[0]
+                response = cast(T, choice.message.parsed)
+            else:
+                completion = await self.aclient.chat.completions.create(
+                    model=model,
+                    messages=messages,
+                    temperature=temperature,
+                    **kwargs,
+                )
+                choice = completion.choices[0]
+                response = cast(T, choice.message.content or "")
+
+            return LLMResponse(
+                response=response,
+                logprobs=self._extract_logprobs(choice),
+                total_tokens=(
+                    completion.usage.total_tokens if completion.usage else None
+                ),
+                provider_model=OpenAIChoice(model=model),
+            )
+        except Exception as e:
+            logger.warning(
+                f"Error responding with OpenAI (chat.completions): {e}", exc_info=True
+            )
+            if raise_:
+                raise e
+            return None
 
     def respond_sync(
         self,
@@ -47,7 +171,18 @@ class OpenAILLM(metaclass=SingletonMeta):
         raise_: bool = False,
         **kwargs: Any,
     ) -> LLMResponse[T] | None:
-        kwargs = self._process_kwargs(kwargs)
+        if self.endpoint_style == "chat_completions":
+            return self._respond_chat_sync(
+                model=model,
+                query=query,
+                response_format=response_format,
+                instructions=instructions,
+                temperature=temperature,
+                raise_=raise_,
+                kwargs=kwargs,
+            )
+
+        kwargs = self._process_kwargs(kwargs, self.client.responses.parse)
 
         try:
             if issubclass(response_format, BaseModel):
@@ -99,7 +234,18 @@ class OpenAILLM(metaclass=SingletonMeta):
         raise_: bool = False,
         **kwargs: Any,
     ) -> LLMResponse[T] | None:
-        kwargs = self._process_kwargs(kwargs)
+        if self.endpoint_style == "chat_completions":
+            return await self._respond_chat(
+                model=model,
+                query=query,
+                response_format=response_format,
+                instructions=instructions,
+                temperature=temperature,
+                raise_=raise_,
+                kwargs=kwargs,
+            )
+
+        kwargs = self._process_kwargs(kwargs, self.client.responses.parse)
 
         try:
             if issubclass(response_format, BaseModel):
