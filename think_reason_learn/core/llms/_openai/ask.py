@@ -3,6 +3,7 @@ import logging
 import os
 
 from openai import AsyncOpenAI, OpenAI
+from openai.types.chat import ChatCompletionMessageParam
 from openai.types.responses import Response
 from pydantic import BaseModel
 
@@ -42,8 +43,10 @@ class OpenAILLM(metaclass=SingletonMeta):
         query: str,
         instructions: str | NotGiven | None,
         kwargs: Dict[str, Any],
-    ) -> List[Dict[str, Any]]:
-        messages: List[Dict[str, Any]] = list(kwargs.pop("messages", None) or [])
+    ) -> List[ChatCompletionMessageParam]:
+        messages: List[ChatCompletionMessageParam] = list(
+            kwargs.pop("messages", None) or []
+        )
         if query and (not messages or messages[-1].get("role") != "user"):
             messages.append({"role": "user", "content": query})
         if instructions and not any(m.get("role") == "system" for m in messages):
@@ -71,13 +74,14 @@ class OpenAILLM(metaclass=SingletonMeta):
         messages = self._chat_messages(query, instructions, kwargs)
         kwargs.setdefault("logprobs", True)
         kwargs.setdefault("top_logprobs", self.top_logprobs)
+        if not isinstance(temperature, NotGiven):
+            kwargs.setdefault("temperature", temperature)
 
         try:
             if issubclass(response_format, BaseModel):
                 completion = self.client.chat.completions.parse(
                     model=model,
                     messages=messages,
-                    temperature=temperature,
                     response_format=response_format,
                     **kwargs,
                 )
@@ -87,7 +91,6 @@ class OpenAILLM(metaclass=SingletonMeta):
                 completion = self.client.chat.completions.create(
                     model=model,
                     messages=messages,
-                    temperature=temperature,
                     **kwargs,
                 )
                 choice = completion.choices[0]
@@ -123,13 +126,14 @@ class OpenAILLM(metaclass=SingletonMeta):
         messages = self._chat_messages(query, instructions, kwargs)
         kwargs.setdefault("logprobs", True)
         kwargs.setdefault("top_logprobs", self.top_logprobs)
+        if not isinstance(temperature, NotGiven):
+            kwargs.setdefault("temperature", temperature)
 
         try:
             if issubclass(response_format, BaseModel):
                 completion = await self.aclient.chat.completions.parse(
                     model=model,
                     messages=messages,
-                    temperature=temperature,
                     response_format=response_format,
                     **kwargs,
                 )
@@ -139,7 +143,6 @@ class OpenAILLM(metaclass=SingletonMeta):
                 completion = await self.aclient.chat.completions.create(
                     model=model,
                     messages=messages,
-                    temperature=temperature,
                     **kwargs,
                 )
                 choice = completion.choices[0]

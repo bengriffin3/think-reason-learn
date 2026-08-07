@@ -7,6 +7,7 @@ so no Ollama or OpenAI account is needed.
 import asyncio
 import math
 from types import SimpleNamespace
+from typing import cast
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -109,8 +110,9 @@ def test_chat_string_response_preserves_logprobs_sync():
     assert call_kwargs["logprobs"] is True
     assert call_kwargs["top_logprobs"] == 5
     assert call_kwargs["messages"] == [{"role": "user", "content": "Say hello"}]
-    llm.client.responses.create.assert_not_called()
-    llm.client.responses.parse.assert_not_called()
+    mock_client = cast(MagicMock, llm.client)
+    mock_client.responses.create.assert_not_called()
+    mock_client.responses.parse.assert_not_called()
 
 
 def test_chat_instructions_become_system_message_sync():
