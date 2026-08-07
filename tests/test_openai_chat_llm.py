@@ -4,7 +4,6 @@ All tests run offline: the OpenAI SDK client methods are replaced with mocks,
 so no Ollama or OpenAI account is needed.
 """
 
-import asyncio
 import math
 from types import SimpleNamespace
 from typing import cast
@@ -194,14 +193,15 @@ def test_chat_error_returns_none_unless_raise():
         llm.respond_sync(model="qwen3:8b", query="Q", raise_=True)
 
 
-def test_chat_string_response_async():
+@pytest.mark.asyncio
+async def test_chat_string_response_async():
     llm = _chat_llm()
     pairs = [("4", -0.01)]
     llm.aclient.chat.completions.create = AsyncMock(
         return_value=_fake_completion(content="4", logprob_pairs=pairs)
     )
 
-    result = asyncio.run(llm.respond(model="qwen3:8b", query="2+2?", raise_=True))
+    result = await llm.respond(model="qwen3:8b", query="2+2?", raise_=True)
 
     assert result is not None
     assert result.response == "4"
@@ -250,15 +250,16 @@ def test_dict_llm_priority_record_routes_to_chat_completions():
         trl_llm.openai_llm = orig_openai
 
 
-def test_chat_structured_output_async():
+@pytest.mark.asyncio
+async def test_chat_structured_output_async():
     llm = _chat_llm()
     parsed = _Verdict(answer="no", confident=False)
     llm.aclient.chat.completions.parse = AsyncMock(
         return_value=_fake_completion(parsed=parsed, logprob_pairs=[("no", -0.3)])
     )
 
-    result = asyncio.run(
-        llm.respond(model="qwen3:8b", query="Q", response_format=_Verdict, raise_=True)
+    result = await llm.respond(
+        model="qwen3:8b", query="Q", response_format=_Verdict, raise_=True
     )
 
     assert result is not None
