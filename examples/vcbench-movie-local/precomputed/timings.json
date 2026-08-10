@@ -1,0 +1,42 @@
+{
+  "machine": "arm64 \u00b7 macOS 26.5.2 \u00b7 18 cores",
+  "model": "qwen2.5-coder:14b",
+  "dataset": "movie",
+  "n_calibration": 10,
+  "n_fit_full": 1461,
+  "n_rows_full": 2188,
+  "methods": {
+    "pi": {
+      "calibration_wall_s": 902.0,
+      "calls_made": 372,
+      "s_per_call": 2.425,
+      "extrapolated_full_run_s": 109713,
+      "calibration_rows_fit": 10,
+      "calibration_rows_scored": 20,
+      "source": "calibrate_timings.py",
+      "contention": "another local benchmark (llama3.1:8b) shared the Ollama server",
+      "projected_full_calls": 22026,
+      "projected_full_run_s": 53413
+    },
+    "rrf": {
+      "calibration_wall_s": 2333.0,
+      "calls_made": 420,
+      "s_per_call": 5.554,
+      "extrapolated_full_run_s": 283771,
+      "calibration_rows_fit": 10,
+      "calibration_rows_scored": 20,
+      "source": "calibrate_timings.py",
+      "contention": "another local benchmark (llama3.1:8b) shared the Ollama server",
+      "projected_full_calls": 30632,
+      "projected_full_run_s": 170130
+    },
+    "gptree": {
+      "deferred": "Not measured. A gemma3:27b benchmark took over the Ollama server mid-run and every 14b call queued behind a model swap. Rerun on an idle machine: python calibrate_timings.py --dataset movie --methods gptree rrm --merge"
+    },
+    "rrm": {
+      "deferred": "Not measured. A gemma3:27b benchmark took over the Ollama server mid-run and every 14b call queued behind a model swap. Rerun on an idle machine: python calibrate_timings.py --dataset movie --methods gptree rrm --merge"
+    }
+  },
+  "captured": "2026-08-10T22:14:00",
+  "note": "Measured on a fresh cache, n=10 rows per method rather than the tool's default 100 (four methods at 100 is most of a day of local inference). `s_per_call` is the reliable number; `projected_full_run_s` multiplies it by the call count a full run makes at each runner's defaults and is the right basis for a runtime table; `extrapolated_full_run_s` scales wall-clock by rows and under-states GPTree. Both measured entries were taken while another local benchmark shared this Ollama server, so they are an upper bound: PI's 2.4 s/call projects 14.8 h against a 14.1 h historical full run, but RRF's 5.6 s/call projects 47 h against 32.6 h historically. Rerun on an idle machine before quoting these as the reference: python calibrate_timings.py --dataset movie"
+}

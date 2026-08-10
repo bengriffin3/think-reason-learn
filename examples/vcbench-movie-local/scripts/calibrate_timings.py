@@ -7,7 +7,7 @@ full-run cost on the current hardware. Results are written to
 ``precomputed/timings.json`` as::
 
     {
-      "machine": "<hostname / chip>",
+      "machine": "<arch · OS · cores>",
       "model": "qwen2.5-coder:14b",
       "dataset": "<vcbench|movie>",
       "n_calibration": 100,
@@ -16,12 +16,21 @@ full-run cost on the current hardware. Results are written to
           "calibration_wall_s": ...,
           "calls_made": ...,
           "s_per_call": ...,
-          "extrapolated_full_run_s": ...
+          "extrapolated_full_run_s": ...,
+          "projected_full_calls": ...,      # calls a full run makes, from the
+          "projected_full_run_s": ...       # runner's defaults x s_per_call
         },
         ...
       },
       "captured": "<ISO timestamp>"
     }
+
+`s_per_call` is the number to trust: one structured completion, and it hardly
+moves between methods. `extrapolated_full_run_s` is the linear-in-rows figure.
+`projected_full_run_s` multiplies the measured rate by the call count a full run
+would actually make, read from each runner's own defaults — use that one for a
+runtime table. A method that could not be measured gets an entry saying so
+rather than being left out, so a missing method never reads as a free one.
 
 This replaces guesswork: historical file-timestamp spans include machine
 sleep/idle and multi-run appends, so they over- or under-state true
@@ -49,13 +58,22 @@ Usage — VCBench (needs the CSV from vcbench.com):
       python calibrate_timings.py --dataset vcbench
 """
 from __future__ import annotations
-import argparse, json, platform, socket, tempfile, time
+import argparse, json, os, platform, tempfile, time
 from pathlib import Path
 
 import _runner_common as rc
 
 METHODS = ["pi", "rrf", "gptree", "rrm"]
 OUT_PATH = rc.EXAMPLE_ROOT / "precomputed" / "timings.json"
+
+# GPTree is the one method a tiny slice cannot exercise: a handful of rows
+# cannot be split into leaves, the fit terminates at the root, and the runner
+# (rightly) refuses to score against a one-node tree. Give it more rows and a
+# smaller leaf minimum. Only its per-call rate is taken from this run — the
+# projected call count comes from the runner's own full-run defaults — so the
+# looser tree does not distort anything downstream.
+SLICE_FLOORS = {"gptree": 20}
+EXTRA_ARGV = {"gptree": ["--min-samples-leaf", "3"]}
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -76,14 +94,20 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 
 def machine_label() -> str:
-    """Hostname plus whatever the platform will tell us about the chip."""
-    chip = platform.processor() or platform.machine()
+    """What the platform will tell us about the chip this was measured on.
+
+    Deliberately not the hostname the schema sketch suggested: these files get
+    committed, and a personal machine name says nothing about throughput. The
+    architecture, OS release and core count are what another reader needs to
+    know whether your numbers should look like theirs.
+    """
     if platform.system() == "Darwin":
-        # platform.processor() is just "arm" on Apple silicon; the release
-        # string plus machine type is the most it will give us without shelling
-        # out to sysctl, and that is enough to tell two boxes apart.
-        chip = f"{platform.machine()} macOS {platform.mac_ver()[0]}"
-    return f"{socket.gethostname()} / {chip}"
+        # platform.processor() is just "arm" on Apple silicon, so the machine
+        # type and release string are the most it gives without shelling out.
+        chip = f"{platform.machine()} · macOS {platform.mac_ver()[0]}"
+    else:
+        chip = f"{platform.machine()} · {platform.system()} {platform.release()}"
+    return f"{chip} · {os.cpu_count()} cores"
 
 
 def full_run_rows(args: argparse.Namespace, spec: rc.DatasetSpec) -> tuple[int, int]:
@@ -128,16 +152,15 @@ def calibrate_one(method: str, args: argparse.Namespace, touched_full: int) -> d
     import importlib
 
     module = importlib.import_module(f"run_{method}")
+    n = max(args.n_calibration, SLICE_FLOORS.get(method, 0))
     with tempfile.TemporaryDirectory(prefix=f"trl_calib_{method}_") as tmp:
         argv = ["--dataset", args.dataset, "--model", args.model,
                 "--concurrency", str(args.concurrency),
-                "--fit-size", str(args.n_calibration),
-                "--limit", str(args.n_calibration),
-                "--out-dir", tmp]
+                "--fit-size", str(n), "--limit", str(n),
+                "--out-dir", tmp] + EXTRA_ARGV.get(method, [])
         if args.data:
             argv += ["--data", str(args.data)]
-        print(f"\n### calibrating {method} on {args.n_calibration} rows "
-              f"(fresh cache in {tmp})\n", flush=True)
+        print(f"\n### calibrating {method} on {n} rows (fresh cache in {tmp})\n", flush=True)
         t0 = time.time()
         metrics = module.main(argv)
         wall = time.time() - t0
@@ -178,6 +201,7 @@ def main(argv: list[str] | None = None) -> dict:
         try:
             entry = calibrate_one(method, args, touched_full)
             calls = projected_calls(method, spec, n_fit_full, n_rows_full)
+            entry["source"] = "calibrate_timings.py"
             entry["projected_full_calls"] = calls
             entry["projected_full_run_s"] = (
                 int(round(calls * entry["s_per_call"])) if entry["s_per_call"] else None)
@@ -188,10 +212,27 @@ def main(argv: list[str] | None = None) -> dict:
                   f"{rc.human_time(entry['projected_full_run_s'] or 0)} by call count\n")
         except KeyboardInterrupt:
             raise
-        except Exception as exc:  # one method failing must not lose the others
+        # A runner aborting — including the deliberate SystemExit a runner
+        # raises when it will not produce usable output — must cost this method
+        # its entry, not the whole calibration. The failure is recorded so
+        # nobody reads a missing method as a method that takes no time.
+        except (Exception, SystemExit) as exc:
             rc.logger.error("%s calibration failed: %s: %s", method, type(exc).__name__, exc)
             results[method] = {"error": f"{type(exc).__name__}: {exc}"[:300]}
+        write_payload(args, results, n_fit_full, n_rows_full)  # never lose a finished method
 
+    payload = write_payload(args, results, n_fit_full, n_rows_full)
+    print(f"\nWrote {args.out}")
+    total = sum(v.get("projected_full_run_s") or 0 for v in results.values())
+    if total:
+        print(f"All {len(results)} methods, full run, this machine: ~{rc.human_time(total)}")
+    return payload
+
+
+def write_payload(args: argparse.Namespace, results: dict,
+                  n_fit_full: int, n_rows_full: int) -> dict:
+    """Write timings.json. Called after every method so a later failure cannot
+    take a finished measurement down with it."""
     payload = {
         "machine": machine_label(),
         "model": args.model,
@@ -212,10 +253,6 @@ def main(argv: list[str] | None = None) -> dict:
     }
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(payload, indent=2))
-    print(f"\nWrote {args.out}")
-    total = sum(v.get("projected_full_run_s") or 0 for v in results.values())
-    if total:
-        print(f"All {len(results)} methods, full run, this machine: ~{rc.human_time(total)}")
     return payload
 
 

@@ -103,14 +103,18 @@ if timings.get("dataset") != sys.argv[2]:
 def full(entry):
     return entry.get("projected_full_run_s") or entry.get("extrapolated_full_run_s") or 0
 
-total = sum(full(v) for v in timings["methods"].values())
-hours = total / 3600
-print(f"\nEstimated total for the four reasoning methods on {timings.get('machine')}: "
-      f"~{hours:.1f}h")
-for name, entry in timings["methods"].items():
-    seconds = full(entry)
-    if seconds:
-        print(f"  {name:8s} ~{seconds / 3600:5.1f}h")
+methods = timings["methods"]
+known = {k: full(v) for k, v in methods.items() if full(v)}
+missing = [k for k in methods if k not in known]
+print(f"\nEstimated on {timings.get('machine')}, from a {timings.get('n_calibration')}-row "
+      f"calibration slice:")
+for name, seconds in known.items():
+    print(f"  {name:8s} ~{seconds / 3600:5.1f}h")
+print(f"  {'total':8s} ~{sum(known.values()) / 3600:5.1f}h"
+      + (f" for {len(known)} of {len(methods)} methods" if missing else ""))
+if missing:
+    print(f"  no timing for {', '.join(missing)} — rerun calibrate_timings.py to measure "
+          f"them; the total above is NOT the whole run")
 print("Plus run_traditional.py, which is under a minute — it makes no LLM calls.\n")
 PY
 fi
