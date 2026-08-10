@@ -39,6 +39,10 @@ def _base_llm() -> Any:
             pass
     from .logprobs_llm_shim import LogprobsLLM
 
+    # The shim builds its own AsyncOpenAI from OPENAI_BASE_URL. Without this it
+    # silently falls back to api.openai.com instead of Ollama. `setdefault`
+    # keeps an explicit environment setting authoritative.
+    os.environ.setdefault("OPENAI_BASE_URL", OLLAMA_BASE_URL)
     return LogprobsLLM()
 
 
