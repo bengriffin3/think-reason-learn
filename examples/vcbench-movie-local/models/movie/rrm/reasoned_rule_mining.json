@@ -1,0 +1,1862 @@
+{
+  "name": "movie_rrm_qwen14b",
+  "reason_llmc": [
+    {
+      "provider": "openai",
+      "model": "qwen2.5-coder:14b"
+    }
+  ],
+  "extract_llmc": [
+    {
+      "provider": "openai",
+      "model": "qwen2.5-coder:14b"
+    }
+  ],
+  "predict_llmc": [
+    {
+      "provider": "openai",
+      "model": "qwen2.5-coder:14b"
+    }
+  ],
+  "reason_temperature": 1.0,
+  "predict_temperature": 0.0,
+  "llm_semaphore_limit": 1,
+  "config": {
+    "perplexity_threshold": 1.6,
+    "ensemble_size": 3,
+    "precision_voting_threshold": 0.5,
+    "ensemble_confidence_threshold": 0.8,
+    "final_confidence_threshold": 0.6,
+    "enable_final_confidence_check": false,
+    "use_harsh": true,
+    "harsh_level": "strict",
+    "beta": 0.5,
+    "recall_floors": [
+      0.05,
+      0.1,
+      0.15
+    ],
+    "weights_alpha_range": [
+      0.0,
+      5.0
+    ],
+    "weights_beta_range": [
+      0.0,
+      5.0
+    ],
+    "weights_bias_range": [
+      -10.0,
+      10.0
+    ],
+    "weights_n_points": 11,
+    "weights_thresh_points": 100,
+    "use_memory": false,
+    "memory_update_interval": 50,
+    "random_state": 42
+  },
+  "task_description": "You are an expert film critic and awards judge, identifying which films earn a major award nomination (YES) versus those that do not (NO), judging purely from the film's free-text plot summary and its narrative/creative qualities.",
+  "policy": "For YES: IF (Character Development AND Emotional Resonance AND Technological Innovation) THEN label = YES.\nFor NO: IF (predictable plot development OR clich\u00e9d character development OR conventional narrative structure) THEN label = NO.",
+  "rules": [
+    {
+      "rule": "IF narrative lacks innovative elements AND characters are traditional archetypes AND cinematic style is conventional AND social issues are handled conventionally THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2944
+    },
+    {
+      "rule": "IF the movie follows well-trodden genre conventions with predictable tropes, has a linear narrative structure without complex twists or character-driven surprises, lacks originality in vampire mythology, features limited character depth and development, does not have exceptional visuals or special effects, explores themes in a light-hearted manner without deep philosophical or emotional resonance, and has no distinctive cinematographic style or standout writing, THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2952
+    },
+    {
+      "rule": "IF (subject matter involves corporate espionage and white-collar crime AND narrative revolves around personal struggles with mental health issues AND character development is multi-faceted but complex AND production quality is subtlely lacking AND historical accuracy vs. dramatization balance is questionable AND genre mix of thriller and personal drama is less effective) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3772
+    },
+    {
+      "rule": "IF (Ordinary Plot and Characters) AND (Lack of Unique Themes or Messages) AND (Conventional Narrative Structure) AND (Limited Emotional Complexity) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0818
+    },
+    {
+      "rule": "IF the plot structure is formulaic, character development feels clich\u00e9d, cinematography and direction lack concrete details of technical achievement, writing quality is standard without exceptional narrative skill, and themes are significant but execution is unremarkable THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3609
+    },
+    {
+      "rule": "IF (narrative clarity and tension is disjointed or less polished) AND (characterization depth lacks distinctive traits) AND (thematic weight is underexplored or lacks nuance) AND (pacing occasionally stalls due to too many narrative threads) AND (visual and cinematic qualities do not fully capitalize on potential) AND (cinematographic choices are strong but not groundbreaking) AND (emotional impact does not leave a profoundly impactful impression) AND (creative originality lacks innovative storytelling techniques) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1569
+    },
+    {
+      "rule": "IF (Genre = Adaptation of Jumanji AND Plot Complexity = Multi-layered but derivative AND Character Development = Predictable AND Visual Effects = Not prominently discussed AND Themes = Universal and clich\u00e9 AND Narrative Mechanics = Straightforward AND Target Audience = Family-friendly) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2568
+    },
+    {
+      "rule": "IF (predictable plot AND lack of complexity AND poor characterization AND unresolved sub-themes AND weak writing AND dialogue AND technical issues AND cinematic weakness AND narrative disconnectedness) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0931
+    },
+    {
+      "rule": "IF plot complexity and originality are lacking, character development relies heavily on historical counterparts without original arcs, themes and messages are not particularly fresh or compelling, technical execution is average, and audience impact is moderate THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3094
+    },
+    {
+      "rule": "IF (over-the-top violence AND lowbrow humor AND formulaic plot AND spectacle over substance AND character development lapses AND cinematographic flaws) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0799
+    },
+    {
+      "rule": "IF (Serial Murder/Serial Killer Focus AND Gritty Realism Over Flashiness AND Procedural/Puzzle Element AND Character Complexity But Lack of Emotional Depth AND Plot Predictability and Formulaic Structure AND Focus on Violence Over Character Development) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0455
+    },
+    {
+      "rule": "IF (complicated plot without an exceptionally engaging central character AND profound dialogue that could be more poetic or impactful AND strong dramatic elements balanced by technical competence rather than innovation AND effective yet unmemorable pacing and direction) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1153
+    },
+    {
+      "rule": "IF (Unique and Memorable Plot AND Symbolism and Themes AND Visual Spectacle AND Character Development AND Emotional Resonance AND Technical Excellence AND Innovation in Narrative AND Audience Impact) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0452
+    },
+    {
+      "rule": "IF (narrative structure is straightforward action film formula AND character development is minimal AND dialogue serves primarily to drive action AND narrative consistency lacks ambitious structures AND special effects are more technical achievements than artistic showcases AND music underlines tension rather than providing thematic depth AND themes lack profound or multifaceted exploration) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3056
+    },
+    {
+      "rule": "IF narrative complexity and pacing are high AND characters have clear motivations and arcs AND action and thrill elements are present AND climactic reveal and resolution are dramatic AND themes or messaging are inconsistent AND lacks signature elements AND technical execution and craft are lacking THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.179
+    },
+    {
+      "rule": "IF (unoriginal concept AND focus on logistical issues AND lack of character development AND inadequate dialogue AND weak emotional impact AND visual effects not vivid AND overall structure predictable) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2539
+    },
+    {
+      "rule": "IF (overreliance on conventional genre elements AND predictable plot development AND basic structure and dialogue AND inconsistent character development AND simplistic use of supernatural elements AND basic cinematography and production design AND substandard special effects AND lack of emotional resonance) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1129
+    },
+    {
+      "rule": "IF (Narrative Structure is complex and challenging for audience engagement) AND (Character Development is uneven with some characters lacking nuance) AND (Emotional Consistency is poor with abrupt shifts) AND (Resolution is unsatisfying and rushed) AND (Cultural Sensitivity does not address themes profoundly or innovatively) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2385
+    },
+    {
+      "rule": "IF (Formulaic Plot Structure AND Excessive Narration AND Flat Characters AND Unsubtle Themes AND Clich\u00e9 Dialogues AND Actions AND Visual and Cinematic Flaws AND Lack of Memorable Moments) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0643
+    },
+    {
+      "rule": "IF (Generic Plot AND Predictable Storyline AND Lack of Complex Themes AND Stylized but Conventional Action Sequences AND Flat Character Development AND Technical Execution Over Creativity AND No Iconic Sequences) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0854
+    },
+    {
+      "rule": "IF Creative Quality is low AND Character Development is poor AND Thematic Depth is lacking AND Cinematography/Visual Effects are unremarkable AND Dialogue and Writing are simplistic AND Originality is absent THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1703
+    },
+    {
+      "rule": "IF (Depth of Character Development AND Historical Context AND Symbolism AND Use of Parable AND Narrative Tension AND Cinematic Craftsmanship AND Moral Commentary AND Pivotal Ending) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0567
+    },
+    {
+      "rule": "IF narrative clarity is low AND characters are static AND themes lack subtlety AND direction is basic AND audience impact is low AND film is unoriginal THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2737
+    },
+    {
+      "rule": "IF (political intrigue AND high stakes AND moral dilemmas AND political commentary AND emotional complexity AND well-crafted characters AND innovative storytelling) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.2135
+    },
+    {
+      "rule": "IF (release year is 1995 AND critical reception is generally positive but divided AND box office success is high but not highest in the year AND competition for awards is strong with other critically acclaimed films nominated AND awards focus is on narrative stories) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3677
+    },
+    {
+      "rule": "IF (plot complexity is high AND character development is predictable AND visual and technical elements are lacking AND themes and ideas are routine AND dialogue and style are unremarkable) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2204
+    },
+    {
+      "rule": "IF (Historical Setting = Prague 1919 AND Genre = Crime Thriller/Political Drama AND Tone = Intrigue/Mystery/Espionage AND Plot Complexity = Solid Themes but Weak Execution AND Narrative Elements = Basic Structure with Limited Character Development AND Cinematic Style = Not Mentioned AND Social/Political Commentary = Generic AND Transferable Elements = Generic Concepts) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2338
+    },
+    {
+      "rule": "IF the plot summary focuses heavily on romance with limited complexity in creative elements and predictable pacing THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.9866
+    },
+    {
+      "rule": "IF (Genre is Science Fiction AND Focus is Legal System) OR (Character Development is Lack of Complex Characters AND Character Interactions are Not Nuanced) OR (Visual Style and Cinematography are Basic AND Narrative Depth is Shallow) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3575
+    },
+    {
+      "rule": "IF (plot is simplistic and predictable) AND (characters lack nuance and development) AND (overreliance on action and violence) AND (inconsistent pacing) AND (limited symbolism and themes) AND (visual effects and cinematography are standard), THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1622
+    },
+    {
+      "rule": "IF (Depth of Characterization AND Strong Themes AND Emotional Impact AND Narrative Complexity AND Cinematic Elements) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0764
+    },
+    {
+      "rule": "IF plot development is uncompelling AND narrative structure is weak AND characters are clich\u00e9d AND use of imagery and tone is limited AND emotional impact is lacking AND style is casual and unpolished THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1271
+    },
+    {
+      "rule": "IF (complexity > clarity) AND (character_development < depth) AND (pacing = disjointed) AND (audience_engagement = sporadic) AND (thematic_coherence < seamless) AND (technique > substance) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2201
+    },
+    {
+      "rule": "IF plot lacks central dramatic event, characters are static, narrative is predictable, no information on visual/cinematic elements, themes are generic, historical context is well-documented but not insightful, and no standout performances THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2415
+    },
+    {
+      "rule": "IF (Complex Narrative Structure AND Highly Visual and Violent Content AND Cinematographic Imagery AND Philosophical Depth AND Memorable Characters and Motivations AND Innovative Themes AND Symbolism and Meaningful Imagery AND Iconic Status) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0261
+    },
+    {
+      "rule": "IF (Genre and Premise Weaknesses AND Character Development Lackluster AND Cinematography and Visuals Inadequate in Description AND Thematic Depth Limited AND Dialogue and Writing Quality Questionable AND Narrative Structure Standard AND Absence of Groundbreaking Moments) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0812
+    },
+    {
+      "rule": "IF plot complexity and structure are intricate with multiple layers but lack groundbreaking techniques, AND character development is competent but lacks deep psychological exploration, AND themes and depth touch on relevant issues but lack sophistication, AND dialogue is sharp but lacks exceptional wit or poetic moments, AND visuals and cinematography use setting effectively but do not showcase innovation, AND acting performances are competent but fall short of being exceptional, AND direction and pacing are sound but conventional rather than innovative, THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2986
+    },
+    {
+      "rule": "IF (bland premise AND overreliance on familiar tropes AND underdeveloped characters AND predictable dialogue AND lack of thematic depth AND weak pacing AND limited special effects AND poor execution of action sequences AND lack of emotional resonancy AND conventional storytelling techniques) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0227
+    },
+    {
+      "rule": "IF uniqueness and originality AND narrative complexity AND rich character development AND striking visual style AND effective humor and tone AND deep thematic resonance AND meticulous direction THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.1083
+    },
+    {
+      "rule": "IF Narrative Structure is formulaic with predictable twists, Character Development is limited without transformative growth, Theme and Symbolism lacks substantial depth, Technical Execution is competent but typical, Dialogue and Writing is sharp but straightforward, Social Commentary is minimal, THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3223
+    },
+    {
+      "rule": "IF (Simple Plot Structure AND Flat Characters AND Formulaic Storytelling AND Limited Themes AND Basic Visual Imagery AND Focus on Action Over Drama AND Lack of Symbolism/Artistic Merit) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0495
+    },
+    {
+      "rule": "IF the plot summary lacks explicit references to awards or recognition for any elements of the film AND the narrative/creative qualities do not include groundbreaking cinematography, exceptional acting performances, or innovative use of artistry AND the genre expectations suggest a low-budget thriller with B-movie quality THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.245
+    },
+    {
+      "rule": "IF (plot is an adaptation of a well-known fairy tale AND follows standard genre conventions AND characters have conventional arcs AND critical reception was mixed for lack of narrative innovation) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.4706
+    },
+    {
+      "rule": "IF (genre = \"buddy cop\" AND character development = \"typical tropes\" AND action elements = \"standard fare\" AND themes = \"commonly explored\" AND direction and execution = \"not distinctive\" AND marketability = \"mainstream audience\") THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2325
+    },
+    {
+      "rule": "IF (Depth of Characterization AND Cinematic Storytelling AND Dialogue and Script Quality AND Relevant Themes AND Directorial Vision AND Industry Presence of Cast and Crew) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.057
+    },
+    {
+      "rule": "IF (adheres to franchise traits AND has a simple plot structure AND lacks complex themes OR social commentary AND characters are uncomplicated AND animation is conventional AND narrative scope is within established boundaries) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2944
+    },
+    {
+      "rule": "IF (Complex Narrative Structure AND Focus on Action AND Lack of Emotional Depth AND Formulaic Elements AND Heroic Conclusion AND Genre-Driven Plot) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0495
+    },
+    {
+      "rule": "IF (Formulaic and Predictable Plot AND Lack of Character Depth AND Narrative Structure and Pacing AND Visual Effects and Budget AND Themes Lack Complexity AND Potential Audience Fatigue AND Cinematography and Direction) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0748
+    },
+    {
+      "rule": "IF Strong Narrative Depth and Emotional Engagement AND Character Complexity and Development AND Conflict and Drama AND Theme and Symbolism AND Themes of Redemption and Justice AND Plot Structure and Pacing THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.055
+    },
+    {
+      "rule": "IF (structure lacks compelling arc or transformational journey AND character development is fragmented and clich\u00e9 AND themes are not explored meaningfully AND dialogue is clich\u00e9 AND writing style lacks finesse AND narrative tension is gratuitous AND creativity and originality are lacking AND symbolism and imagery lack deep meaning AND impact on viewer is flat) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2063
+    },
+    {
+      "rule": "IF narrative complexity & originality are clich\u00e9, character development & depth are flat, thematic depth is superficial, technical aspects & cinematography are lackluster, symbolism & visual imagery are gratuitous, and impact & audience engagement are limited THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.127
+    },
+    {
+      "rule": "IF narrative complexity is lacking AND character arc is straightforward AND themes are oversimplified AND visual storytelling details are absent AND audience engagement is weak AND innovative elements are not groundbreaking AND critical reception is not strong THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2616
+    },
+    {
+      "rule": "IF Narrative Structure and Pacing is clear, structured, and logically presented; Characters are well-defined with straightforward antagonist actions and compelling survivor protagonist; Thematic Depth explores familiar themes without complex or abstract elements; Cinematography and Visual Style evoke vivid imagery typical of the genre; Actor Performance Potential includes notable actors from a younger cohort; Genre Convention and Expectation aligns closely with established franchise norms; Audience Appeal resonates with mainstream audiences interested in thriller/horror genres THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2926
+    },
+    {
+      "rule": "IF (unique plot AND iconic characters AND satirical tone AND memorable dialogues AND technical excellence AND impactful themes AND innovative structure) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0774
+    },
+    {
+      "rule": "IF (Complex, multi-character plot AND High-stakes conflict AND Dark themes AND Symbolism and literary references AND Thriller elements AND Character development AND Legal intrigue) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0443
+    },
+    {
+      "rule": "IF (Formulaic Plot AND Shallow Character Development AND Rushed Narrative Pacing AND Lack of Themes AND Uncreative Direction AND Clich\u00e9 Dialogue) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2754
+    },
+    {
+      "rule": "IF (narrative heavily relies on flashbacks AND fragmented storytelling AND limited supporting characters AND sci-fi element weakness AND lack of themes or commentary AND limited visual appeal AND production value) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2629
+    },
+    {
+      "rule": "IF (Lack of Originality AND Overreliance on Conventional Conflict AND Underdeveloped Character Arcs AND Focus on Sensationalism Over Insight AND Absence of Cinematic Elements AND Lack of Relevance and Timeliness) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0617
+    },
+    {
+      "rule": "IF Visual Effects Weakness AND Character Development Light AND Cinematic Imagery Limited AND Complex Themes Absent AND Narrative Structure Conventional AND Dialogue Basic THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0207
+    },
+    {
+      "rule": "IF plot lacks dynamic character development, compelling subplots, groundbreaking cinematography, dramatic tension, emotional depth, fresh perspectives, or innovative storytelling techniques THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.08
+    },
+    {
+      "rule": "IF predictability AND flat characters AND lack of psychological complexity AND formulaic plot AND flat writing style AND simplistic resolution THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0898
+    },
+    {
+      "rule": "IF (proper plot structure AND notable character flaws AND lack of thematic depth AND predictable plot flow AND competent writing quality AND disjointed visual and narrative cohesion AND superficial emotional resonance) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.209
+    },
+    {
+      "rule": "IF plot complexity with familiar tropes AND symbolism lacking innovation AND characters generic without depth AND predictable paths in storytelling AND misses literary depth AND impressive visuals lack conceptual freshness AND emotionally underdelivering THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.7172
+    },
+    {
+      "rule": "IF (thematic depth AND compelling characters AND complex narrative structure AND symbolism AND visual/cinematic qualities AND societal impact) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.2115
+    },
+    {
+      "rule": "IF (Formulaic Plot Structure AND Lack of Innovative Narrative Techniques AND Underdeveloped Themes AND Weak Character Development AND Predictable Dialogue and Actions AND Inconsistent Pace and Tone AND Moderate Visuals and Soundtrack) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0462
+    },
+    {
+      "rule": "IF (Formulaic Plot AND Lack of Depth and Character Development AND Action Sequences as Substitute for Narrative AND Clich\u00e9 Dialogue and Writing Style AND Global Setting as a Setpiece Rather Than a Storydriver AND No Unique Visual Style or Direction AND Absence of Strong Themes or Message) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0347
+    },
+    {
+      "rule": "IF Narrative Structure and Themes are Concentric with Historical Setting, Character Development includes Complex Protagonist and Rich Supporting Cast, Cinematography and Stylization is Realistic but not Groundbreaking, Genre and Market Positioning is Classic WWII Drama without Innovation, and Cultural Reception and Impact is Limited Scope for Innovation THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3348
+    },
+    {
+      "rule": "IF (Simple Plot Structure AND Overreliance on Formulaic Elements AND Predictable Character Development AND Inconsistent Plot Points AND Lack of Depth in Themes and Motivations AND Technical and Cinematic Weaknesses AND Limited Emotional Impact) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0445
+    },
+    {
+      "rule": "IF (universal themes AND well-developed characters AND motivational arc AND engaging plot twist AND heartfelt resolution AND inspirational messages AND historical context AND emotional depth) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.1063
+    },
+    {
+      "rule": "IF narrative complexity is convoluted AND character arc development is lacking AND visual effects execution is unknown AND dialogue quality is uncertain AND emotional impact is weak AND originality and theme depth are insufficient AND directional choices are unclear THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2219
+    },
+    {
+      "rule": "IF (average narrative complexity AND predictable plot development AND limited visual nuance AND average character depth AND inheritance of themes AND lack of iconic moments OR motifs AND general tone and genre fit) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1486
+    },
+    {
+      "rule": "IF narrative complexity AND significant character development AND intense conflicts AND rich themes AND symbolism AND cinematic qualities THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.2085
+    },
+    {
+      "rule": "IF (Lack of Complexity AND Predictable Narrative Arc AND Overreliance on Horror Tropes AND Weak Character Development AND Minimal Thematic Depth AND Surface-level Thrills) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0378
+    },
+    {
+      "rule": "IF the plot summary follows a common narrative arc typical of genre films, characters have limited development, themes are well-worn within the franchise, cinematographic elements rely more on spectacle than subtle execution, and critical reception lacks bold storytelling or groundbreaking ideas THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2923
+    },
+    {
+      "rule": "IF plot involves familiar formulas, lacks profound themes, shallow character development, impressive visuals without setting new standards, competent cinematography without distinctive style, and minor sound design enhancements THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.4428
+    },
+    {
+      "rule": "IF (Lack of Innovation AND Predictability AND Low Emotional Impact AND Weak Writing AND Inconsistent Visual Flare AND Techno-Babble Without Substance) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0373
+    },
+    {
+      "rule": "IF Narrative Focus is on survival with limited complex internal character arcs or broader societal commentary AND Visual Elements and Direction lack innovative cinematography or unique shots AND Character Development lacks deep layers of motivation, emotional depth, or multi-dimensional conflicts AND Themes and Symbolism are familiar in execution AND Screenplay and Writing adhere closely to common narrative frameworks without significant innovation AND Impact on Audience is emotionally resonant but not challenging viewers' perceptions AND Comparative Analysis shows it lacks unique attributes compared to award-winning films AND Performance details are limited AND Genre and Originality are straightforward without experimentation AND Cultural and Social Impact addresses issues in conventional ways THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.4415
+    },
+    {
+      "rule": "IF narrative complexity and depth are present AND character development is significant AND themes and social commentary are relevant BUT technical aspects like cinematography or music are lacking THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.5829
+    },
+    {
+      "rule": "IF (film is part of a successful franchise built primarily on fright and merchandise) AND (narrative structure follows typical elements expected of sequels in the horror genre) AND (direction and cinematography are not groundbreaking) AND (acting performances lack critical attention) AND (critical reception is mixed, focusing more on genre contributions than sophisticated storytelling) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2451
+    },
+    {
+      "rule": "IF plot focuses on time-travel for comedic effect AND characters are dim-witted with little development AND humor is childish slapstick AND plot arcs are predictable AND relies heavily on pop culture references AND visual effects enhance a basic story THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2851
+    },
+    {
+      "rule": "IF exceptional character development AND captivating themes AND innovative storytelling techniques AND striking visuals and atmosphere THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.1192
+    },
+    {
+      "rule": "IF derivative plotting AND clich\u00e9d ideas AND narrative weaknesses AND creative flaws THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1764
+    },
+    {
+      "rule": "IF (plot structure is non-linear but lacks deeper meaning) AND (character development is nuanced for one character but less substantial for another) AND (narrative depth explores societal norms and personal experiences without pushing boundaries) AND (themes are standard fare for dramas without broader philosophical inquiries) AND (creative elements lack poetic language or significant artistic achievement) AND (emotional connection evokes standard emotions without striking impact) AND (overall impact lacks boldness or originality), THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3731
+    },
+    {
+      "rule": "IF (plot complexity is simple linear and lacks twists or surprises) AND (character development is limited and underdeveloped) AND (themes and messages are lacking universal resonance) AND (narrative consistency has confusing subplots and plot holes) AND (cinematography and technical elements are basic), THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2711
+    },
+    {
+      "rule": "IF narrative complexity is high AND emotional impact is moderate AND character development is shallow AND pacing is disjointed AND visual and cinematic qualities are lacking AND social relevance is moderate AND themes and messages are uninspired THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1793
+    },
+    {
+      "rule": "IF (Simplistic Plot Structure AND Predictable Pacing AND Technical Flaws AND Flat Characters AND Scientific Errors OR Oversimplification AND Lack of Emotional Impact AND Cinematic Techniques) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1008
+    },
+    {
+      "rule": "IF (Historical Significance AND Dynamic Characters AND Engaging Plot AND Visual Styling AND Music and Sound Design AND Emotional Impact AND Pacing AND Cultural Impact) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0504
+    },
+    {
+      "rule": "IF innovative and original narrative structure AND complex themes and social commentary AND dynamic character development AND striking cinematography AND symbolism and cultural significance AND intricate dialogues AND impactful plot points AND memorable sequences AND themes of innocence vs. corruption AND symbolic ending THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.155
+    },
+    {
+      "rule": "IF the film is a historical drama with a balanced narrative tone, boring plot elements, limited scope, subtlety over impact, and a tight focus on relationships without significant dramatic embellishments THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.172
+    },
+    {
+      "rule": "IF (story structure is clich\u00e9 and predictable AND multiple unrealistic coincidences occur AND characters lack depth AND dialogue lacks profundity AND overall impact feels unremarkable) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.481
+    },
+    {
+      "rule": "IF (genre is fantastical AND concept is experimental) AND (narrative complexity is high AND character development is flat) AND (thematic overreach is present AND setting and tone are preachy) AND (film length is long AND structure is unbalanced) AND (marketability is low AND creative execution is poor) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2899
+    },
+    {
+      "rule": "IF (Complex Plot Structure AND Cynical Undercurrents AND Narrative Cohesion AND Character Development AND Symbolism and Themes AND Visual Style and Direction) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0914
+    },
+    {
+      "rule": "IF (predictable plot structure AND lack of originality AND shallow character development AND clich\u00e9d dialogue AND unremarkable visuals AND superficial themes AND rushed execution AND supernatural elements as plot devices) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2048
+    },
+    {
+      "rule": "IF (Complex Narrative Structure AND Subject Matter Sensitivity AND Lack of Widely Recognized Talent AND Indoor Shooting Limitations AND Minimal Social Impact AND Production Constraints) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0478
+    },
+    {
+      "rule": "IF Narrative Complexity is low AND Thematic Depth is insufficient AND Cinematic Techniques are subpar AND Audience Engagement is weak THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.287
+    },
+    {
+      "rule": "IF (Derivative Plot AND Lack of Innovation AND Weak Narrative Development AND Clich\u00e9d Sequences) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2205
+    },
+    {
+      "rule": "IF Predictable Plot Development AND Overreliance on Formulaic Elements AND Flat Character Development AND Unsatisfying Resolution AND Limited Narrative Complexity AND Cinematic Weaknesses AND Emotional Disengagement THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0362
+    },
+    {
+      "rule": "IF plot is somewhat predictable, characters are underdeveloped, themes lack depth, visual impact is limited, cinematic techniques are overreliant on conventions, dialogue quality leans towards exposition, and ending resolution is unsatisfying THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2062
+    },
+    {
+      "rule": "IF (memorable plot twist AND complex characters with depth AND romantic elements AND symbolism and imagery AND humor and irony AND cinematic style AND resolution AND dialogue) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0907
+    },
+    {
+      "rule": "IF plot relies heavily on familiar fairy tale elements and recycled characters AND lacks complex character development and nuanced narrative arcs AND has predictable storytelling AND disconnected narrative structure AND no exceptional visual effects or animation work AND lacks cinematic and thematic subtlety THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2397
+    },
+    {
+      "rule": "IF (Complex Plot & Themes AND Character Development AND Visual & Cinematic Elements AND Scientific Accuracy & Originality AND Emotional Engagement AND Narrative Arc & Resolution) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0999
+    },
+    {
+      "rule": "IF narrative structure is predictable, character development is shallow, dialogue is competent but not finely crafted, themes are common and lack depth, visuals and cinematography are not exceptional, pacing is engaging but not sophisticated, THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2467
+    },
+    {
+      "rule": "IF (Complex Themes AND Cinematic Craftsmanship AND Character Depth AND Symbolism AND Acting Opportunities AND Cinematic Innovation AND Moral Ambiguity) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.053
+    },
+    {
+      "rule": "IF Character Development is lacking AND Narrative Complexity is low AND Special Effects and Visuals are subpar AND Dialogue and Writing are formulaic AND Themes and Subtext are shallow AND Execution and Direction are inconsistent THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1057
+    },
+    {
+      "rule": "IF Narrative Complexity is high AND Cinematic Techniques are gimmicky AND Referential Nature is heavy AND Character Development is lacking AND Theme Depth is simplistic AND Executional Flaws are present AND Audience Engagement is poor THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2042
+    },
+    {
+      "rule": "IF (Depth of Characterization AND Rich Historical Context AND Symbolism and Imagery AND Adult Themes for Young Audience AND Striking Visuals and Direction AND Strong Moral Themes AND Cinematic Influence AND Award-Winning Score) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0331
+    },
+    {
+      "rule": "IF (Complex storyline with multiple subplots AND strong character development AND high scientific accuracy AND strong emotional impact) AND (Lack of signature director or actor) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2301
+    },
+    {
+      "rule": "IF narrative simplicity AND lack of cinematic innovation AND standard narrative structure AND simple themes AND consistent tone AND lack of symbolism or subtext AND limited character development AND straightforward plot points AND use of escapism rather than provocation AND no cultural commentary OR innovation THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1095
+    },
+    {
+      "rule": "IF (Character Development & Complexity AND Psychological Depth AND Narrative Structure & Pacing AND Dialogue & Subtext AND Symbolism & Motifs AND Visual & Cinematic Style) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1109
+    },
+    {
+      "rule": "IF (Innovative Structure or Creative Vision = NO) AND (Depth of Themes = NO) AND (Character Development = NO) AND (Visual and Cinematic Elements = NO) AND (Dialogue and Writing Quality = NO) AND (Narrational Impact = NO) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0554
+    },
+    {
+      "rule": "IF plot revolves around external events rather than deep character exploration or emotional resonance AND lacks symbolism and subtext AND overreliance on external factors for character development AND weak narrative arc and resolution AND lack of memorable themes or moral messages AND uncomplicated characters with limited depth AND surface-level plot devices without intellectual rigor THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.169
+    },
+    {
+      "rule": "IF (predictable plot AND unrefined pacing AND lack of character depth AND weak supernatural elements AND poor visual style AND overreliance on action AND unresolved ending) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.109
+    },
+    {
+      "rule": "IF (Complex Narrative Structure AND Well-Developed Characters AND Rich Dialogue AND Moral Ambiguity AND Iconic Elements AND Classic Detective Genre AND Cinematic Allusions AND Atmospheric Pacing) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0362
+    },
+    {
+      "rule": "IF plot complexity is high AND character development is weak AND protagonist behavior lacks depth AND themes are predictable AND narrative cohesion is poor AND dialogue quality is unknown AND emotional impact is plot-driven THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2308
+    },
+    {
+      "rule": "IF (Lack of Complex Subtext OR Predictable Narrative Structure OR Simplistic Character Development OR No Technical Excellence OR Lack of Standout Dialogue OR No Innovative Elements) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1977
+    },
+    {
+      "rule": "IF (Engaging Plot with Moral Complexity AND Cinematic Quality and Direction AND Compelling Lead Performance AND Stellar Supporting Performances AND Impactful Themes AND Memorable Moments and Sequences AND Social Relevance and Impact AND Critical and Audience Reception) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0523
+    },
+    {
+      "rule": "IF (Emotional Depth AND Character Development AND Narrative Complexity AND Themes of Redemption AND Social Commentary AND Engaging Subplots) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.174
+    },
+    {
+      "rule": "IF narrative structure is linear and straightforward, character development is lacking, violence execution feels exploitative rather than artistically necessary, setting and atmosphere are functional rather than evocative, thematic depth is minimal, writing style and dialogues are disjointed and clunky, and cinematic elements are absent THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1505
+    },
+    {
+      "rule": "IF Narrative Complexity AND Multiple Subplots AND Character Development AND Surprise Elements AND Themes AND Visual Choices THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2884
+    },
+    {
+      "rule": "IF (Formulaic Plot Structure AND Predictable Outcomes AND Limited Character Development AND Weak Dialogue AND Basic Cinematography AND Lack of Strong Themes) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0869
+    },
+    {
+      "rule": "IF (compelling plot structure AND complex character development AND high stakes and drama AND social and ethical themes AND symbolism and significance) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0921
+    },
+    {
+      "rule": "IF (Complex Character Development AND Multi-Generational Storyline AND Psychological Nuance AND Visual and Emotional Impact AND Themes of Justice and Innocence AND Masterful Use of Language and Memory) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0625
+    },
+    {
+      "rule": "IF (predictable plot elements AND lack of complex character development AND overreliance on action sequences AND formulaic resolution AND limited originality) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0521
+    },
+    {
+      "rule": "IF (narrative_depth = \"formulaic\" AND character_development = \"lack nuance\" AND themes = \"average\" AND cinematic_artistry = \"none\" AND critical_reception = \"average\") THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3338
+    },
+    {
+      "rule": "IF (complex plot with multiple twists and subplots AND charismatic protagonist with depth AND engaging secondary characters AND dynamic action sequences AND themes of loyalty, forgiveness, and redemption AND visual and cinematic appeal AND social commentary on crime and corruption AND high entertainment value) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.1294
+    },
+    {
+      "rule": "IF plot complexity is present but lacks depth, character development is one-dimensional, cinematography and direction are unremarkable, pacing is predictable, dialogue is generic, impact and emotional resonance are lacking, and there are no innovative elements THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.212
+    },
+    {
+      "rule": "IF (Complex Narrative Structure AND High Emotional Conflict AND Compelling Character Arcs AND Symbolism and Imagery AND Technical and Craftsmanship Excellence AND Themes of Responsibility and Consequences) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0433
+    },
+    {
+      "rule": "IF (Formulaic Plot Structure AND Lack of Innovative Narrative AND Mechanical Action Scenes AND Overreliance on Character Types AND Lack of Social Commentary OR Thought-Provoking Themes) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1559
+    },
+    {
+      "rule": "IF (Depth of Character Development is superficial AND Cinematic Techniques and Atmosphere are not detailed AND Social Commentary is not explored deeply AND Symbolism and Themes feel arbitrary AND Narrative Complexity lacks uniqueness AND Directional Quality focuses on recounting events) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1962
+    },
+    {
+      "rule": "IF (High Concept AND Action and Adventure AND Characters and Relationships AND Thematic Depth AND Atmospheric Sensations AND Cinematography and Visual Effects AND Production Values) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.082
+    },
+    {
+      "rule": "IF the plot lacks coherent narrative arcs and depth of character development, AND events seem disjointed and overly sensationalized, AND poor dialogue and subpar acting portrayals are evident, AND cinematography and direction appear amateurish, AND fails to maintain consistent fear-inducing elements in a horror aesthetic, AND overuses explicit content without substantial psychological or emotional payoff, AND lacks thematic depth, AND shows weak follow-up potential compared to popular franchises, AND fails to capitalize on genre conventions effectively, THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1334
+    },
+    {
+      "rule": "IF (focus on pedagogical impact AND cinematographic appeal is lacking AND originality in storytelling or theme is limited AND depth of character development is uneven AND narrative complexity is straightforward AND critical reception is lukewarm) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2433
+    },
+    {
+      "rule": "IF (plot complexity is straightforward AND character development is limited AND tension is predictable AND dialogue lacks sophistication AND visual style is standard AND themes lack depth AND direction lacks distinctive techniques) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2757
+    },
+    {
+      "rule": "IF (Simple Plot Structure AND Limited Focus AND Unremarkable Dialogue/Dialogue Delivery AND Visual/Aesthetic Weaknesses AND Avoids Heavy Footnote/Literary Praise AND Familiar Themes/Settings AND Emotional Impact Absence) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0328
+    },
+    {
+      "rule": "IF (Generic Plot Elements AND Flat Character Development AND Lack of Distinctive Visual/Narrative Flair AND Shallow Thematic Depth AND No Groundbreaking Technical Innovations AND Notable Actors Without Transformative Roles) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2185
+    },
+    {
+      "rule": "IF Plot Structure and Complexity is clear and conventional, Character Development is limited and cliched, Originality and Creativity are lacking, Writing Style is straightforward without literary flair, Visual Appeal and Action Sequences are not exceptional, and Impact of Historical Context is minimal THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1673
+    },
+    {
+      "rule": "IF (predictable_plot AND generic_characters AND heavy-handed_themes AND pacing_issues AND marketing_focus_on_over-the-top_elements AND limited_cinematographic_appeal AND dialogue_and_relationships) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1481
+    },
+    {
+      "rule": "IF story complexity is high AND character depth is strong AND cinematographic potential is significant AND lack of distinctive innovation AND emotional impact is present THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3758
+    },
+    {
+      "rule": "IF (unoriginality AND basic plot structure AND generic characters AND weak dialogue AND underwhelming cinematography AND lack of social commentary) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1135
+    },
+    {
+      "rule": "IF (Formulaic Structure AND Predictability AND Lack of Nuanced Character Development AND Standard Visuals AND Shallow Themes) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2374
+    },
+    {
+      "rule": "IF Historical Accuracy and Sensitivity AND Narrative Complexity AND Acting Performances and Character Development AND Directional Expertise AND Cinematic Impact THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1275
+    },
+    {
+      "rule": "IF (plot complexity is high AND character development is lacking AND themes are superficial AND visual elements are basic AND resolution is anticlimactic) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2413
+    },
+    {
+      "rule": "IF (Formulaic Narrative Structure AND Limited Character Development AND Lack of Innovative Themes OR Social Commentary AND Focus on Action Sequences Over Narrative Depth AND Absence of Emotional Subtext) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0467
+    },
+    {
+      "rule": "IF (Genre is drama, romance, thriller AND Character development is limited AND Plot complexity is predictable AND Themes are clich\u00e9 AND Direction and cinematography are not exceptional AND Overall impact is conventional) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3087
+    },
+    {
+      "rule": "IF (Historical Significance AND Emotional Impact AND Symbolism AND Acting Excellence AND Directorial Skill AND Dramatic Structure AND Sociopolitical Commentary AND Aesthetic Appeal) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0551
+    },
+    {
+      "rule": "IF (Complexity and Depth of Plot AND Intrigue and Suspense AND Character Development AND Themes and Symbolism AND Visual Imagery and Aesthetics AND Historical and Cultural Context AND Emotional Impact AND Riveting Central Performance) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0344
+    },
+    {
+      "rule": "IF (derivative plot structure AND weak character development AND predictable pacing AND inadequate themes AND visual/technical flaws AND lackluster writing) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1162
+    },
+    {
+      "rule": "IF plot is filled with implausible coincidences and unrealistic events AND movie toggles between serious, gory horror elements and lighter comedic moments AND lacks any fresh perspective or innovative twist on the genre AND character development is superficial and underdeveloped AND there are no notable technical achievements THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1646
+    },
+    {
+      "rule": "IF (Lack of Depth in Character Development AND Predictable Plot Progression AND Limited Emotional Impact AND Weak Thematic Exploration AND Focus on Technical Aspects Over Narrative Artistry) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0377
+    },
+    {
+      "rule": "IF (Unique Narrative Structure AND Visual Intrigue AND Atmosphere and Tone AND Character Arcs AND Symbolism and Themes) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1935
+    },
+    {
+      "rule": "IF Narrative Structure is straightforward and linear, Character Development is static, Themes are common and lack profound social commentary, Cinematic Style is conventional, and Impact and Originality are average THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1646
+    },
+    {
+      "rule": "IF (Predictable Plot Structure AND Lack of Complexity in Characterization AND Simple Themes AND Technical Aspects NOT DISTINCTIVE AND Ending Resolution Straightforward) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3922
+    },
+    {
+      "rule": "IF the plot summary is detailed and long without significant plot resolution or character development, lacks explicit indication of artistic cinematography, special effects, or memorable visual imagery, focuses more on plot progression than character insight, does not emphasize sustained tension, twists, or pacing elements, and notable cinematic techniques are missing THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.267
+    },
+    {
+      "rule": "IF (clich\u00e9d plot AND formulaic storyline AND shallow characters AND action over depth AND lack of innovation) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1553
+    },
+    {
+      "rule": "IF Narrative Complexity and Originality is not groundbreaking AND Character Depth is conventional AND Execution and Craftsmanship lacks distinctive artistic vision AND Thematic Impact is universal but not provocative THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1681
+    },
+    {
+      "rule": "IF (genre is comedy AND plot involves unintentional misadventures AND characters are clich\u00e9d AND scope is limited AND resolution is predictable AND lacks cultural impact) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.5006
+    },
+    {
+      "rule": "IF (Clich\u00e9d Plot Structure AND Lack of Depth and Complexity AND Predictable Character Arcs AND Pacing Issues AND Limited Themes OR Social Commentary AND Overreliance on Shock Elements AND Visual Limitations AND Audience Engagement) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0749
+    },
+    {
+      "rule": "IF narrative structure is predictable and unexciting, AND character development is static with limited supporting roles, AND visual storytelling is basic without striking visuals, AND dialogue is unmemorable, AND thematic depth is surface-level without moral complexity, THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1693
+    },
+    {
+      "rule": "IF (unconventional_writing_style_for_genre = NO AND predictable_plot_development = YES AND lack_of_character_depth = YES AND focus_on_action_over_themes = YES AND minimal_visual_description = YES AND generic_tone = YES) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1076
+    },
+    {
+      "rule": "IF plot revolves around standard tropes, characters lack depth, narrative structure is disjointed, themes are explored superficially, and there is no significant mention of technical aspects THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.205
+    },
+    {
+      "rule": "IF (genre = action-adventure AND budget is constrained AND character development is shallow AND narrative complexity is low) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.409
+    },
+    {
+      "rule": "IF (predictable plot outline AND procedural conflict AND dependence on stereotypes AND lack of depth in supporting characters AND focus on action but lacking in subtext) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0597
+    },
+    {
+      "rule": "IF (Violence and Gore are overcooked and exploitative) AND (Lack of Complexity in characters and plot) AND (Pacing is disjointed and inconsistent) AND (Use of Genre Elements feels clashing rather than integrated) AND (Direction and Execution lack skillful execution) AND (Absence of Social Commentary or Cultural Impact) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2673
+    },
+    {
+      "rule": "IF (engaging narrative AND character development AND thought-provoking themes) AND NOT (outstanding performances OR significant technical achievements OR widespread critical acclaim) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.4062
+    },
+    {
+      "rule": "IF plot complexity is uncomplicated AND characters lack depth AND storytelling is mechanical AND lacks memorable theme OR message AND pacing has issues AND dialogue is unmemorable AND setting lacks originality AND visual creativity is low THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2511
+    },
+    {
+      "rule": "IF (warfare_narrative AND character_development AND heroic_acts AND historical_relevance AND commander_relocation AND impactful_battle_scenes) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.1527
+    },
+    {
+      "rule": "IF (Genre = \"Action-Thriller\" AND Character_Development = \"Flat\" AND Narrative_Complexity = \"Simple\" AND Screenwriting_Focus = \"Pacing_and_Action\" AND Themes_Depth = \"Lack_of_Thematic_Depth\" AND Technical_Achievements = \"None\") THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2299
+    },
+    {
+      "rule": "IF (Simple Plot AND Predictable Narrative Arc AND Formulaic Characters AND Lack of Originality AND Subtle Themes AND Weak Humor AND Overreliance on Emotional Resolutions) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0689
+    },
+    {
+      "rule": "IF narrative complexity is intricate with multiple subplots, character development is strong and pivotal, visual effects are sophisticated, thematic depth is explored, cinematography and art direction are striking, action sequences are high-stakes, and message and impact are significant THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2308
+    },
+    {
+      "rule": "IF (Character Arcs are well-established without significant new twists OR Themes are handled in a conventional manner OR Cinematic Qualities lack distinctive elements OR Dialogue and Script lack exceptional narrative skills OR Ensemble Cast Usage does not result in standout performances OR Resolution is unextraordinary) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2667
+    },
+    {
+      "rule": "IF (Originality is innovative but not unique) AND (Narrative Complexity is high and often difficult to follow) AND (Character Development is uneven with some characters underdeveloped) AND (Cinematography and Visual Effects are impressive but overly reliant on spectacle) AND (Thematic Depth is explored thoughtfully but unclearly communicated) AND (Pacing and Structure are rapid and sometimes rushed or drawn out) AND (Ending Controversy leads to mixed critical reception) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.267
+    },
+    {
+      "rule": "IF plot complexity is straightforward, characters are flat, cinematography and visual effects are not distinctive, there is no innovation or creativity, themes and messages are generic, production quality is lacking, emotional impact is weak, and technical execution is unremarkable THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1921
+    },
+    {
+      "rule": "IF narrative complexity is high AND psychological depth is present AND themes are thought-provoking AND executional flaws exist AND lack of social impact OR cultural significance THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2481
+    },
+    {
+      "rule": "IF (originality is limited by familiar tropes AND narrative complexity leads to confusion AND character development is overshadowed by plot twists AND cinematography and visual effects are not strong AND themes are present but not profound AND direction and pacing are unspecified AND dialogue and writing focus more on action than impact) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2628
+    },
+    {
+      "rule": "IF high production value is lacking AND critical reception is not overwhelming AND innovative or genre-challenging elements are absent AND star power or major cast is not present AND social impact or cultural significance is missing AND universal appeal or emotional resonance is weak THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2192
+    },
+    {
+      "rule": "IF narrative focuses on internal struggles, lacks high-stakes action/adventure, revolves around family dynamics without intense conflicts, absence of iconic moments/dialogue, and has an everyday setting without extraordinary visuals THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.132
+    },
+    {
+      "rule": "IF plot complexity is intricate and follows a straightforward narrative arc, characters are well-developed with distinct motivations, themes are explored thoughtfully without exploitation, execution quality manages complexity without overwhelming the audience, and market appeal is broad but lacks distinctive features setting it apart from other films in the same genre THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2507
+    },
+    {
+      "rule": "IF plot is simple and predictable, character development is shallow, themes lack depth, visuals rely on special effects for entertainment, dialogue is generic, and overall engagement lacks unexpected sequences THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2747
+    },
+    {
+      "rule": "IF (complex plot structure AND absence of innovation in concept AND imperfect character relationships AND pacing issues) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2189
+    },
+    {
+      "rule": "IF (Formulaic Plot Structure AND Lack of Originality AND Minimal Character Development AND Predictable Plot Twists AND Limited Symbolism and Themes AND Dialogue Quality AND Visuals and Special Effects AND Cinematography and Direction) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0744
+    },
+    {
+      "rule": "IF (Formulaic Plot Structure AND Routine Action Sequences AND Predictable Character Arcs AND Lack of Subtlety AND Minimal Dialogues for Character Development AND Heroic Protagonist without Flaws) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0574
+    },
+    {
+      "rule": "IF Narrative Complexity is straightforward AND Character Development is limited AND Themes and Symbolism are basic AND Cinematic Techniques are not sophisticated AND Narrative Tension does not challenge intellectually OR emotionally AND Emotional Impact is not distinctive AND Uniqueness and Innovation are lacking AND Dialogue and Pacing are decent but not engaging THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1772
+    },
+    {
+      "rule": "IF (Struggle Against Adversity AND Real-Life Basis AND Character Development AND Cinematography and Visuals AND Themes of Survival and Mental Toughness AND Inspirational Message) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.041
+    },
+    {
+      "rule": "IF (Formulaic Story Structure AND Clich\u00e9 Themes AND Absence of Complex Subtext AND Technical Limitations AND Lack of Social Commentary OR Originality) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1214
+    },
+    {
+      "rule": "IF (Complex Plot Structure AND Predictable Outcomes AND Limited Character Development AND Lack of Emotional Depth AND Inconsistent Narrative Voice AND Mundane Visual Pacing AND Narrative Predictability) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1031
+    },
+    {
+      "rule": "IF the narrative arc is formulaic, character development relies on tropes, lacks nuanced exploration of social issues and moral complexities, cinematography and direction are standard for the genre, and character dynamics follow expected patterns THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3637
+    },
+    {
+      "rule": "IF (Period Setting = apartheid-era South Africa AND Narrative Complexity = deeply emotional and multifaceted story involving personal growth, cultural clash, mentorship, and political resistance AND Character Development = significant transformation AND Themes and Messages = identity, racial tension, and personal transcendence against apartheid) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1474
+    },
+    {
+      "rule": "IF plot structure lacks depth or complexity AND character development is uneven OR rushed AND dialogue feels clich\u00e9 AND themes lack nuance AND action sequences feel more like set pieces than integral parts of the story AND cinematography and special effects are typical rather than innovative AND pacing is fast with little time for introspection THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3797
+    },
+    {
+      "rule": "IF (gratuitous violence AND simple narrative structure AND limited character development AND clich\u00e9 plot devices AND minimal social commentary AND focus on action over subtlety) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1143
+    },
+    {
+      "rule": "IF narrative complexity is lacking AND character development is minimal AND themes and symbolism are shallow AND conflict and tension are mild AND visual imagery is descriptive but lacks vivid detail AND pacing and timing are linear THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3237
+    },
+    {
+      "rule": "IF plot structure is repetitive and predictable, characters are flat and underdeveloped, direction and cinematography are basic, writing lacks originality, themes are shallow, and overall impact is limited THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2667
+    },
+    {
+      "rule": "IF (plot is derivative AND character development is weak AND script quality is formulaic AND story arc is unclear AND visual effects fail to compensate for narrative shortcomings AND audience engagement is low) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2781
+    },
+    {
+      "rule": "IF (Social Commentary AND Complex Characters AND Sexual Content AND Themes_and_Motifs AND Cinematography_and_Style AND Tone_and_Atmosphere) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.178
+    },
+    {
+      "rule": "IF (Formulaic Plot Structure AND Limited Character Development AND Predictable Narrative Direction AND Lack of Nuanced Themes AND Unfashionable Style AND Inconsistent Dialogue) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0786
+    },
+    {
+      "rule": "IF Plot Complexity is clich\u00e9d AND Narrative Structure lacks depth AND Character Development is limited AND Dialogue and Writing Quality are forced AND Thematic Depth is shallow AND Cinematography and Direction lack brilliance AND Production Quality is lacking THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.19
+    },
+    {
+      "rule": "IF (Lack of Complexity in Character Development AND Predictable Plot Structure AND Underdeveloped Themes AND Subpar Writing and Dialogue AND Weak Emotional Impact) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1669
+    },
+    {
+      "rule": "IF (Complex Structure and Flashbacks AND Unusual Focus on a Humanoid Chimpanzee AND Limited Character Development AND Inconsistent Themes and Philosophical Integration AND Lack of Universal Appeal AND Innovative Yet Predictable Plot Elements) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0642
+    },
+    {
+      "rule": "IF (predictable plot structure AND lack of depth in characters AND inconsistent pacing AND underdeveloped themes AND predictable twists and turns AND weak dialogue and screenwriting AND lack of visual innovation AND limited emotional impact) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0686
+    },
+    {
+      "rule": "IF (predictable plot structure AND ordinary characters AND limited character depth AND simplified conflict resolution AND conventional superhero powers AND narrative overload AND limited cinematic qualities AND lack of symbolism/theme) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0767
+    },
+    {
+      "rule": "IF (predictable storytelling AND lack of compelling character development AND weak visuals AND unrealistic plot devices AND predictable resolution AND overreliance on plot summary) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1652
+    },
+    {
+      "rule": "IF Narrative Complexity AND Character Development AND Thematic Depth AND Cinematography & Visual Appeal AND Dialogue & Writing Quality AND Execution & Style THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.101
+    },
+    {
+      "rule": "IF (Rich Narrative Complexity AND Memorable Characters AND Supernatural Elements AND Musical Integration AND Cultural Impact AND Symbolism AND Technical Excellence AND Historical Legacy) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.1591
+    },
+    {
+      "rule": "IF plot complexity and depth are strong but do not rise to the level typically required for award nomination AND character development is strong but lacks revolutionary elements AND dialogue and writing quality are nuanced and well-crafted without being overly sentimental AND technical and cinematographic elements are not explicitly mentioned AND genre and audience reception appeal to a wide audience but lack originality THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2776
+    },
+    {
+      "rule": "IF plot complexity is intricate and features multiple twists, AND characters are multi-dimensional with rich motivations, AND setting creates a unique ambiance, AND themes explore significant topics like corruption and redemption, AND action sequences are controlled without excessive graphic detail, AND writing and dialogue are strong, BUT there are no details about cinematography or production quality THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.4661
+    },
+    {
+      "rule": "IF (Pacing Issues AND Character Development Issues AND Stereotypical Supernatural Elements AND Poor Dialogue AND Disjointed Narrative AND Lack of Tension AND Technical Deficiencies AND Directional Weaknesses) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.086
+    },
+    {
+      "rule": "IF narrative clarity and structure are strong, characters are well-developed, themes are significant but not controversial, visual and cinematic elements are implied to be effective, emotional resonance is present, universal appeal exists, and there are no technical flaws or missing award-winning qualities THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.4159
+    },
+    {
+      "rule": "IF narrative complexity is high AND visual style is distinctive AND iconic themes are present AND humor and satire are strong AND cultural impact is enduring AND lack of award recognition proximity exists THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2831
+    },
+    {
+      "rule": "IF (plot complexity is high AND character development is superficial AND pacing is frenetic AND emotional resonance is low) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3218
+    },
+    {
+      "rule": "IF (Plot Focus = Personal struggles AND Character Development = Tragedy AND Narrative Structure = Chronological progression AND Visual Elements and Cinematography = Not mentioned AND Music Integration = Basic themes AND Cast and Performances = Limited ensemble focus AND Social Impact = Absent) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2567
+    },
+    {
+      "rule": "IF (Artistic Merit AND Complex Character Development AND Social Commentary AND Directional Quality AND Strong Screenplay) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.1581
+    },
+    {
+      "rule": "IF (compelling plot with depth AND characters with dimension AND symbolism and imagery AND emotional resonance AND technical excellence AND universal themes AND visually engaging) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0613
+    },
+    {
+      "rule": "IF (Historical Significance AND Biographical Depth AND Narrative Complexity AND Cultural Impact AND Symbolism and Themes AND Political Relevance AND Cinematic Quality AND Controversial Elements AND Audience Engagement) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0833
+    },
+    {
+      "rule": "IF plot structure is predictable, character development is generic, themes are standard without profundity, screenplay lacks subtext and poetic expressions, visuals and atmosphere are conventional, emotional impact relies on clich\u00e9s, direction is conventional with little intensity, and cast utilization does not amplify or disrupt the film's pacing and structure THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2556
+    },
+    {
+      "rule": "IF Routine Plot Structure AND Limited Character Development AND Predictable Narrative Arcs AND Absence of Thematic Depth AND Straightforward Dialogue AND Steady Pace Without Peak Moments AND Average Cinematography and Direction THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0865
+    },
+    {
+      "rule": "IF the plot summary lacks intricate subplots, complex narrative elements, deep character development, subtle dialogue, innovative cinematography, and compelling social commentary THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.209
+    },
+    {
+      "rule": "IF (character development is lacking OR theme exploration is superficial OR cinematographic techniques are not detailed OR pacing lacks tension OR originality is underwhelming OR emotional impact is shallow) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.4153
+    },
+    {
+      "rule": "IF plot complexity is intricate with multiple timelines, supernatural elements, bizarre drug use, and an overarching cosmic threat; characters are well-drawn but interactions feel inorganic or deeply developed; innovative concepts are bold and original; visual effects and special effects are high-stakes action scenes, alternate timelines, and otherworldly creatures; direction and pacing feel disjointed; dialogue is clich\u00e9 and inflexible; target market is horror fans and cerebral sci-fi elements; public reception and box office performance are poor THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2866
+    },
+    {
+      "rule": "IF (compelling characters AND engaging conflict AND rising action AND dramatic themes AND cinematic quality AND strong performances) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.2638
+    },
+    {
+      "rule": "IF (Fragmented Plot AND Predictable Pacing AND Flat Characters AND Limited Character Reactions AND Routine Visuals AND Inconsequential Locations AND Sporadic Emotional Engagement AND Limited Character Arcs AND Superficial Themes AND Absence of Symbolism) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0547
+    },
+    {
+      "rule": "IF narrative complexity is straightforward, character depth is underdeveloped, themes and symbolism are clich\u00e9, dialogue quality is functional, direction and cinematography are not highlighted, there are no innovative elements, and memorability and impact are lacking THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1159
+    },
+    {
+      "rule": "IF (reliance on franchise tropes AND lack of substantial innovation AND character development lacking depth AND typical visual elements AND conventional narrative structure AND minimal originality) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2036
+    },
+    {
+      "rule": "IF plot is convoluted with multiple murders, cover-ups, and interpersonal conflicts AND characters are underdeveloped beyond their roles in propelling the plot forward AND dialogue lacks subtlety and nuance AND themes are tackled in a clich\u00e9 manner AND direction/cinematography are not particularly noteworthy AND impact/emotional resonance is limited THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1284
+    },
+    {
+      "rule": "IF (Generic Plot Structure AND Lack of Complexity AND Predictable Resolution AND Unsubtle Themes AND Narrative Style) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1473
+    },
+    {
+      "rule": "IF (Multi-dimensional Characters AND Symbolism and Motifs AND Character Growth and Resolution AND Rich Detail and Setting AND Emotional Complexity AND Cultural Commentary) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0782
+    },
+    {
+      "rule": "IF plot complexity hinders pacing AND character motivations feel inconsistent OR wooden dialogue disrupts immersion AND lacks standout visual elements OR relies heavily on genre conventions AND emotional impact is inconsistent THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3956
+    },
+    {
+      "rule": "IF plot revolves around sports rivalry and personal journey without profound social commentary or groundbreaking themes, AND characters are well-developed but lack transformative narratives, AND technical elements are not explicitly outstanding, AND film does not carry significant social commentary or cultural relevance THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3498
+    },
+    {
+      "rule": "IF (prosaic plot AND formulaic characters AND minimal themes AND technically mediocre visual elements AND lack of social commentary) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1375
+    },
+    {
+      "rule": "IF plot follows conventional structure, character development is limited, narrative pacing is straightforward, themes are superficial, cinematography and direction are unremarkable, dialogue lacks subtlety, and social impact is minimal THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2642
+    },
+    {
+      "rule": "IF (Narrative Depth and Complexity AND Visual Imagery and Cinematic Style AND Character Development AND Symbolism and Environmental Themes AND Emotional Impact AND Creative Originality) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0859
+    },
+    {
+      "rule": "IF Plot Focus = Coming-of-age in Nashville music scene AND Character Development = Predictable arcs AND Themes and Messages = Common and well-executed BUT not innovative AND Genre Conformity = Standard romantic comedy AND Cinematography and Production Values = Not standout AND Social Impact = Limited THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1953
+    },
+    {
+      "rule": "IF (Historical Context = Substantial AND Complexity of Themes = Essential AND Character Development = Central AND Tension and Action = High AND Cinematographic Quality = Not Explicitly Mentioned AND Dialogue and Subtext = Surface-Level AND Social Impact = Substantial BUT Predictability = High AND Simplistic Plot Devices = Present AND Lack of Artistic Ambition = Yes) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2249
+    },
+    {
+      "rule": "IF Plot Complexity > 3 AND Character Development < 2 AND Genre Execution < 2 AND Creativity < 2 AND Emotional Impact < 2 THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2282
+    },
+    {
+      "rule": "IF (Originality and Fresh Perspective AND Character Depth and Authenticity AND Cinematic Quality and Production AND Themes and Social Commentary AND Emotional Impact AND Technical Aspects) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.1292
+    },
+    {
+      "rule": "IF (Iconic Plot and Narrative Structure) AND (High Concept and Sci-Fi Imagery) AND (Character Development and Emotional Depth) AND (Visual Effects and Innovation) AND (Cultural Impact and Iconography) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0636
+    },
+    {
+      "rule": "IF Narrative complexity is not layered and intricate, Theme development lacks psychological complexity or philosophical musings, Character depth is underdeveloped, Visual style and cinematography are not emphasized, Language use is straightforward without literary flourishes, Genre conventions adhere strongly to thriller/action norms, Pacing feels rushed, Message or significance is secondary to action sequences, Emotional impact is high adrenaline but low catharsis, Influence on the medium focuses on plot twists rather than innovative techniques THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2787
+    },
+    {
+      "rule": "IF the plot structure is formulaic, character development is shallow, dialogue lacks subtlety, there are no standout visual or narrative techniques, themes are rudimentary, and overall originality is lacking THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3746
+    },
+    {
+      "rule": "IF (Lack of complex themes OR Lack of originality OR Minimal character growth OR Simple resolution OR Lack of unique visual style OR Generic settings OR Overemphasis on personal conflict OR Limited subplots) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0725
+    },
+    {
+      "rule": "IF straightforward plot summary AND simple character development AND simplistic moral messaging AND family-oriented appeal AND overt themes AND no visual or technical innovations THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.5551
+    },
+    {
+      "rule": "IF narrative structure is gimmicky and lacks cohesion, AND character development is unrealistic or poorly executed, AND directorial style is disjointed and heavy-handed, AND creative execution is underwhelming, AND dialogue and subtext are forced or simplistic, AND pacing is inconsistent THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2077
+    },
+    {
+      "rule": "IF narrative complexity and depth are lacking, AND character development is superficial, AND originality and innovation are gimmicky, AND cinematic virtuosity is absent, AND thematic depth is shallow THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2474
+    },
+    {
+      "rule": "IF originality is low AND character depth is insufficient AND plot structure relies heavily on clich\u00e9s AND creative elements are not innovative enough AND execution lacks finesse THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.4126
+    },
+    {
+      "rule": "IF (action-packed plot AND overly familiar elements AND lack of character depth AND pacing issues AND underwhelming special effects AND black-and-white portrayal AND target audience appeal) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1965
+    },
+    {
+      "rule": "IF Narrative Structure is straightforward and conventional, Character Development is limited to heroic traits without nuance, Dialogue and Writing are generic and formulaic, Action Sequences are predictable and rely heavily on visual effects, Themes and Message lack depth and broader exploration, Cinematography and Visual Elements are not exceptional, and Acting Performances are competent but lack memorable moments THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1537
+    },
+    {
+      "rule": "IF (Character Development and Depth = Average AND Narrative Structure = Predictable AND Thematic Depth = Common AND Cinematography and Style = Standard AND Themes and Motifs = Familiar AND Impact and Message = Moderate AND Execution Quality = Competent) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1412
+    },
+    {
+      "rule": "IF (Generic Plot and Character Development AND Limited Depth and Originality AND Unrealistic Narrative Flow AND Underdeveloped Themes AND Execution and Quality AND Potential Audience Reactions AND Technical Aspects) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0969
+    },
+    {
+      "rule": "IF (Complex Relationships AND Exploration of Themes AND Psychological Depth AND Cinematic Quality AND Narrative Tension AND Character Development AND Cultural Context AND Endings & Closures) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0859
+    },
+    {
+      "rule": "IF (Heartwarming and Emotional Storyline AND Strong Character Development AND Creativity in World-Building AND Clever Plot Twists AND Aesthetic Appeal AND Themes of Friendship and Sacrifice) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0356
+    },
+    {
+      "rule": "IF (Historical Setting AND Narrative Structure = sprawling AND Character Development = limited AND Cinematography = not strikingly innovative AND Critical Reception = mixed) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2539
+    },
+    {
+      "rule": "IF (Character Development is rich AND Unique Conceptual Premise is innovative AND Cinematic Style complements themes AND Dialogue and Performance are commendable AND Themes of Mental Health are handled sensitively AND Social Impact explores societal issues AND Emotional Resonance and Resolution are fulfilling) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.2278
+    },
+    {
+      "rule": "IF the plot has multiple genre tropes, heavy character load, excessive genre cliches, bland antagonist motivation, narrative fragmentation, and lack of visual innovation THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2431
+    },
+    {
+      "rule": "IF (predictable plot twists AND over-reliance on sentimentality AND shallow character development AND absence of social commentary AND inconsistent pacing AND focus on sensory details AND lack of tension AND predictable resolution) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0822
+    },
+    {
+      "rule": "IF (Historical Significance AND Themes of Genius and Ambition AND Artistic Integrity AND Psychological Depth AND Emotional Impact) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.118
+    },
+    {
+      "rule": "IF (Complex, Multi-dimensional Characters AND High Tension AND Thematic Relevance AND Cinematography and Direction AND Symbolism and Subtext AND EngagingDialogue AND Pacing) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.1465
+    },
+    {
+      "rule": "IF genre is crime thriller AND character development is predictable AND plot relies on stock actions AND follows clich\u00e9s THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2876
+    },
+    {
+      "rule": "IF Narrative Complexity and Depth AND Character Development AND Emotional Impact AND Cinematography and Direction AND Symbolism and Themes THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.1018
+    },
+    {
+      "rule": "IF (Niche Audience Engagement AND Unusual Narrative Structure AND Rudimentary Visual Effects AND Lack of Thematic Depth AND Limited Storytelling Emphasis) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0975
+    },
+    {
+      "rule": "IF (mechanistic premise AND lack of character development AND sticking to formula AND poor narrative structure AND minimal thematic depth AND overreliance on gore AND limited direction and cinematography) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0543
+    },
+    {
+      "rule": "IF Narrative Structure is clear but not revolutionary, Character Depth is limited, Subtextual Themes are intriguing but not impactful, Visual Effects and Cinematography are not described, Writing Style is crisp but lacks innovation, Influences and Originality are derivative, Audience Engagement is decent but not exceptional, Social Commentary or Philosophical Themes are present but not deeply explored THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1919
+    },
+    {
+      "rule": "IF high production value AND pop culture impact AND strong character development AND visual creativity AND universal themes THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0797
+    },
+    {
+      "rule": "IF character development is surface-level, lacks deep psychological complexity, themes are absent or unprovoking, narrative structure is straightforward without stylistic innovation, dialogue quality is engaging but lacks nuance, visual appeal is vivid but lacks striking cinematographic techniques, and emotional resonance is impactful but not sustained, THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3298
+    },
+    {
+      "rule": "IF (plot complexity and uniqueness is formulaic AND character development is shallow AND historical context serves more as backdrop AND themes and messages are clich\u00e9d AND dialogue lacks memorable quotes AND visuals and directional choices are lacking) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2459
+    },
+    {
+      "rule": "IF Plot Complexity and Originality is Standard AND Narrative Structure has Disconnected Storylines AND Characters are Well-Developed but Clich\u00e9d AND Setting is Rich but Not Revolutionary AND Themes are Classic and Universal THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3519
+    },
+    {
+      "rule": "IF narrative complexity lacks sophistication, characters are underdeveloped, visual and stylistic qualities are basic, themes lack nuance, dialogue is unremarkable, innovation is gimmicky rather than deeply explored, and emotional impact is lacking THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2706
+    },
+    {
+      "rule": "IF (Simple Plot Mechanics AND Lack of Complexity in Characterization AND Predictable Narrative Structure AND Limited Thematic Depth AND Generic Humor AND Action Sequences Overstorytelling) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0515
+    },
+    {
+      "rule": "IF (Formulaic Structure AND Simple Themes AND Routine Character Development AND Casual Treatment of Serious Issues AND Plot Predictability AND Limited Focus on Creative Elements) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.068
+    },
+    {
+      "rule": "IF (Genre Focus = Coming-of-age drama AND Narrative Complexity = Engaging plot with multiple subplots AND Cinematography/Aesthetic Appeal = Basic race scenes AND Character Development and Acting = Central but not exceptional performances AND Themes and Social Impact = Poignant themes AND Box Office Performance and Nominations = No significant accolades) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1843
+    },
+    {
+      "rule": "IF (Generic Genre Elements AND Predictable Plot Development AND Lack of Depth in Characterization AND Visual and Cinematic Limitations AND Narrative and Directional Weaknesses) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1123
+    },
+    {
+      "rule": "IF the plot summary focuses heavily on historical accuracy and biographical details without significant dramatization, characters are portrayed realistically, cinematography and visual style are straightforward and period-appropriate, narrative complexity and themes are not deeply explored, and there is no intense critical reception or controversy THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3058
+    },
+    {
+      "rule": "IF (Originality and Innovation AND Complex Narrative Structure AND Visual and Conceptual Artistry AND Exploration of Metaphysical Themes AND Character Development and Acting Challenges AND Audience Engagement and Memorability AND Potential Technical Achievements) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0487
+    },
+    {
+      "rule": "IF (era and setting provide depth but do not correlate with award nominations) AND (plot involves complex elements but focuses more on spectacle than narrative innovation) AND (character development is limited despite rich backstories) AND (themes exist but serve a thrilling adventure rather than deep commentary) AND (cinematography and direction are imaginative but lack groundbreaking achievements) AND (cultural impact is about delivering an accessible genre experience rather than subverting norms or challenging them), THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2921
+    },
+    {
+      "rule": "IF (Complex Narrative and Depth of Characterization AND Psychological Complexity and Uniqueness AND Artistic Merit and Cinematic Style AND Social-Relevance and Historical Context AND Impactful Themes and Moral Nuance AND Notable Filmmaking Techniques) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0395
+    },
+    {
+      "rule": "IF Historical Accuracy AND Narrative Tension AND Character Development AND Thematic Depth AND Visual and Cinematographic Appeal AND Innovative Elements AND Target Audience THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1521
+    },
+    {
+      "rule": "IF (Iconic Status AND Universal Themes AND Comedic Brilliance AND Innovative Plot AND Captivating Characters AND Stellar Cast AND Technical Mastery) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0763
+    },
+    {
+      "rule": "IF (Lack of Complexity AND Formulaic Structure AND Predictable Plot Development AND Simplistic Theme AND Lack of Character Depth AND Execution Quality) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0752
+    },
+    {
+      "rule": "IF (Formulaic Plot AND Bespoke Action Sequences AND Underdeveloped Characters AND Clich\u00e9 World-Building AND Lack of Themes AND Competent Cinematography) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1129
+    },
+    {
+      "rule": "IF narrative complexity is high AND character development is strong AND themes are impactful BUT cinematography is atmospheric AND box office performance is significant AND industry competition is intense THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3822
+    },
+    {
+      "rule": "IF narrative complexity is conventional, characters are archetypes, cinematography and visual effects are not exceptional, dialogue and pace are standard, emotional nuance is lacking, and themes are explored but not uniquely, THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2838
+    },
+    {
+      "rule": "IF Narrative Structure is straightforward and conventional, Characters are one-dimensional, Themes and Message are familiar and clich\u00e9, Execution lacks stylistic innovation, Innovation and Artistry are absent, and Social Impact and Relevance are clinical THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1663
+    },
+    {
+      "rule": "IF Narrative Weakness AND Character Development Issues AND Themes Lack Depth AND Technical Quality Poor AND Audience Engagement Low AND Innovation Absent THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3981
+    },
+    {
+      "rule": "IF narrative complexity and intrigue are high AND themes are engaging but not unique AND execution of narrative techniques is strong but could be improved AND creative elements are inventive but not groundbreaking AND technical aspects are good but not exceptional THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.4105
+    },
+    {
+      "rule": "IF (Lack of Complexity and Depth AND Repetitiveness in Plot Elements AND Weak Dialogue and Writing AND Weak Visual and Cinematic Elements AND Absence of Innovation) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0812
+    },
+    {
+      "rule": "IF narrative structure is chaotic and nonsensical, AND characterization lacks depth or compelling motivations, AND themes are generic and overused without originality, AND cinematic artistry relies heavily on clich\u00e9s with little innovation, AND dialogue is underdeveloped, AND resolution is unsatisfying and poorly wrapped up THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2432
+    },
+    {
+      "rule": "IF Narrative Complexity lacks cohesive theme or deeper philosophical exploration AND Character Development is episodic rather than arc-driven AND Visual and Cinematographic Brilliance is not mentioned AND Creative Elements are more exposition than creative exploration AND Audience Engagement is limited beyond niche interest AND Comparative Analysis shows lack of innovative storytelling techniques OR groundbreaking themes THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1931
+    },
+    {
+      "rule": "IF plot complexity and narrative depth are high AND character development is detailed AND technical and narrative innovations are present AND humor and satire elements exist AND budget implications are modest AND thematic underpinnings are strong AND viewer appeal is broad THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3666
+    },
+    {
+      "rule": "IF Narrative Structure lacks depth and cohesion AND Character Development is abrupt and forced AND Themes and Message lack nuance AND Writing Quality is basic AND Visuals and Art Direction are not impressive AND Execution has flaws AND Impact on Audience is shallow THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2132
+    },
+    {
+      "rule": "IF (character development is simple AND narrative depth is lacking AND visual style is unremarkable AND themes are superficial AND direction and craftsmanship are ordinary AND dialogue is unmemorable AND premise is conventional) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1967
+    },
+    {
+      "rule": "IF plot complexity is high with numerous fantastical elements AND characters lack deep emotional development AND narrative execution involves rapid scene changes AND themes feel heavy-handed AND visual appeal is not mentioned AND originality is lacking AND conclusion feels saccharine THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.4757
+    },
+    {
+      "rule": "IF (Originality and Creativity AND Engagement and Emotional Impact AND Stellar Visuals and Cinematography AND Narrative Depth AND Cast Performance Potential AND Cultural Commentary) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0846
+    },
+    {
+      "rule": "IF (genre is high-octane action movie AND lacks depth or sophisticated character development AND writing quality is straightforward without descriptive language AND characters are underdeveloped AND no exceptional cinematography or pacing highlighted AND visual effects impressive but basic AND substance does not engage deeply with weightier themes AND emotional impact is limited AND no groundbreaking themes or innovative twists) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.4924
+    },
+    {
+      "rule": "IF (plot structure predictable AND character development limited AND themes shallow AND dialogue unrealistic AND visual spectacle not groundbreaking AND soundtrack lacks depth AND cinematography adequate but formulaic AND directional qualities uneven) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3475
+    },
+    {
+      "rule": "IF (plot introduces an intriguing premise AND character development is compelling AND narrative structure maintains forward momentum AND themes are philosophically deep AND emotional appeal is strong) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3802
+    },
+    {
+      "rule": "IF (Lack of Complexity and Depth) AND (Predictable Plot Twists) AND (Overreliance on Familiar tropes) AND (Limited Character Development) AND (Disjointed Narrative Structure) AND (Lack of Emotional Impact) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0902
+    },
+    {
+      "rule": "IF (Rich Character Development AND Engaging Central Conflict AND Poignant Emotional Journey AND Beautiful Setting Descriptions AND Moral Ambiguity AND Historical Context AND Captivating Plot Twists AND Strong Themes and Messaging) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0356
+    },
+    {
+      "rule": "IF nuanced character arcs, deep emotional depth, relatable conflicts and resolution, rich cultural context, universal themes, cinematic craftsmanship, and symbolism/subtext THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.2264
+    },
+    {
+      "rule": "IF (Complex Narrative Structure AND Dynamic Characters AND High Stakes Drama AND Thematically Rich AND Cinematography and Visuals AND Tense Pace and Pacing Control) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0481
+    },
+    {
+      "rule": "IF the film is derivative of existing franchises, relies heavily on genre tropes without substantial innovations or unique themes, has narrative progression with key moments that feel like obligatory plot points rather than impactful twists or deep character arcs, lacks depth in character relationships and psychology beyond surface-level fears and motivations, does not exhibit sophisticated or technical filmmaking elements, and lacks originality, cultural commentary, or artistic innovation THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3367
+    },
+    {
+      "rule": "IF (Narrative Structure & Character Development = Complex AND Historic Accuracy & Cultural Context = Relevant AND Cinematography & Visual Style = Hints at striking visuals AND Themes & Sociopolitical Commentary = Resonant AND Cinematic Qualities & Technical Achievements = Potential for strong performances AND Lack of Major Award-Associated Elements = Missing innovative cinematography, standout performances, high production values, and critical acclaim) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1944
+    },
+    {
+      "rule": "IF themes of social injustice and racial tensions, strong character development, compelling narrative arc, innovative use of symbolism, diverse ensemble cast, impactful ending, and social commentary are present THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.1135
+    },
+    {
+      "rule": "IF narrative structure is complex but execution is disjointed, character development lacks depth, dialogue is standard and lacks memorable lines, themes are unoriginal, visual style and direction are unspecified, and impact and originality are lacking THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1763
+    },
+    {
+      "rule": "IF (Narrative Complexity AND Character Development AND Creative Elements AND Cinematic Technique AND Themes of Therapy) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.288
+    },
+    {
+      "rule": "IF (memorable and iconic story AND innovative concept AND memorable characters AND cinematic technicalities AND pop culture impact AND redefinition of parent-child relationships AND engaging plot revisions AND celebratory ending for main character) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0442
+    },
+    {
+      "rule": "IF (action-oriented plot AND lack of character development AND excessive violence AND minimal drama AND generic story elements AND technical proficiency over creativity AND mass entertainment appeal AND genre constraints AND focus on action hero stereotypes) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0688
+    },
+    {
+      "rule": "IF (Formulaic Plot Structure AND Routine Character Development AND Overreliance on Action Sequences AND Lack of Subtext and Themes AND Unremarkable Dialogue and Pacing AND Visuals and Cinematography ARE Standard AND Soundtrack Integration IS Standard AND Ending Resolution IS Conventional) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.167
+    },
+    {
+      "rule": "IF (Historical Impact AND Innovation) AND (Character Development) AND (Pivotal Event Documentation) AND (Engaging and Visual Storytelling) AND (Social Importance) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.1089
+    },
+    {
+      "rule": "IF (Plot Complexity and Originality is low AND Narrative Structure is repetitive AND Character Development is shallow AND Technical Aspects and Special Effects are unimpressive AND Themes and Message are repetitive) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.187
+    },
+    {
+      "rule": "IF Innovative Storytelling AND Cultural Sensitivity AND Authentic Representation AND Character Development AND Themes and Symbolism AND Dialogue and Writing THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2329
+    },
+    {
+      "rule": "IF (Special Effects Quality = \"overreliance on visuals\") AND (Plot Predictability = \"predictable twists\") AND (Direction and Pacing = \"uneven pacing with downtime\") AND (Character Development = \"underdeveloped characters\") AND (Script Complexity = \"easily digestible tropes\") AND (Thematic Depth = \"overdone theme\"), THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1803
+    },
+    {
+      "rule": "IF (plot summary is straightforward and follows typical high school drama conventions) AND (lack of unique creative elements) AND (unremarkable characters) AND (simple setting and atmosphere) AND (basic conflict) AND (lack of high stakes/rare drama) AND (unspecialized visual/audio aspects) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0754
+    },
+    {
+      "rule": "IF Narrative Focus = interpersonal relationships, Character Depth = predictable, Cinematic Techniques = conventional, Thematic Scope = narrow, Tone and Style = straightforward, Plot Resolution = conventional THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1948
+    },
+    {
+      "rule": "IF (genre pacing is disjointed AND character development is underdeveloped AND themes are superficial AND narrative disruptions are significant AND execution challenges exist) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1631
+    },
+    {
+      "rule": "IF plot complexity is low AND character development is limited AND narrative scope is narrow AND historical context engagement is weak AND focus on creative elements is minimal AND social commentary is weak THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1746
+    },
+    {
+      "rule": "IF narrative complexity and structure are highly developed, dialogue is incisive and conversational, themes are profound, visual elements are vivid, cinematographic techniques are dynamic, and overall quality is high THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3564
+    },
+    {
+      "rule": "IF (Rich and Engaging Plot AND Character Development AND Social Commentary AND Visual Appeal AND Cultural Sensitivity and Authenticity AND Symbolism and Themes AND Climactic Moments AND Tonal Complexity) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0589
+    },
+    {
+      "rule": "IF (Complex Narrative Arc AND Character Development AND Engaging Themes AND Potent Visual Imagery AND Emotional Depth AND High-Quality Cinematography AND Excellent Script Quality) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0986
+    },
+    {
+      "rule": "IF (Formulaic Plot AND Predictable Arcs AND Lack of Complexity AND One-Dimensional Characters AND Contrived Relationships AND Lack of Intellectual Stimulation AND Absence of Moral Ambiguity AND Visual Banality AND Editing and Pacing Issues AND Superficial Thrills AND Disregard for Cinematic Artistry) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0702
+    },
+    {
+      "rule": "IF narrative lacks depth and complexity AND characters do not undergo significant transformation AND technical quality is underwhelming AND creativity feels formulaic AND pacing is uneven THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1422
+    },
+    {
+      "rule": "IF (plot complexity is high AND character development lacks depth AND emotional impact is uneven AND narrative flow is episodic AND creative execution is not innovative enough AND audience engagement is inconsistent) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2483
+    },
+    {
+      "rule": "IF (Generic Plot Structure AND Lack of Original Themes AND Flat Characterization AND Visual and Narrative Disconnection AND Narrative Cohesion Issues AND Limited Emotional Depth AND Inclusion of Elements Not Reflective of High-Award Filmmaking AND Weak Climactic Resolution) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.048
+    },
+    {
+      "rule": "IF (Formulaic Plot Structure AND Simplistic Characters AND Lack of Depth in Themes AND Weakness in Creative Aspects AND Dialogue and Writing Clich\u00e9 AND Pacing and Engagement Steady AND Limited Emotional Complexity) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1273
+    },
+    {
+      "rule": "IF the film has complex and well-developed characters, rich symbolism and themes, explores psychological complexity, features visually stunning moments, evokes powerful emotions, includes a climactic rescue plot, and innovatively uses archetypes THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.189
+    },
+    {
+      "rule": "IF (Historical Significance AND Impact on Society AND Balanced Perspectives AND Emotional Resonance AND Political Commentary AND Cinematography and Direction AND Character Development AND Symbolism and Themes) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0419
+    },
+    {
+      "rule": "IF (Clich\u00e9 Plot Structure AND Lack of Subtlety and Complexity AND Basic Special Effects AND Repetitive Actions AND Shallow Character Development AND Low-stakes Plotting) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0683
+    },
+    {
+      "rule": "IF plot complexity and narrative arc are present but not groundbreaking, AND character development is limited with ambiguous motivations, AND dialogues and pacing are unmemorable or ineffective, AND cinematic elements lack uniqueness, AND thematic depth is shallow, THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3252
+    },
+    {
+      "rule": "IF Rich Character Development AND Unique Setting AND Engaging Relationships AND Visual Creativity AND Memorable Themes AND Impactful Events AND Cultural Influence AND Technical Excellence THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0595
+    },
+    {
+      "rule": "IF (Seriality & Continuity is poor AND Lack of Thematic Depth AND Unresolved Clues & Plot Points AND Character Development Flaws AND Action & Plot Intensity is over-the-top AND Pacing Issues AND Dialogue & Writing Style is forced) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1153
+    },
+    {
+      "rule": "IF Narrative Complexity is not exceptional or original AND Character Development lacks depth and nuance AND Cinematic Techniques are not innovative or striking AND Dialogue and Writing Quality lack sharp wit, insight, or memorable quotes AND Themes are not significant or universal AND Action Sequences and Pacing fail to elevate beyond standard Hollywood fare AND Directorial Vision does not set it apart from average productions THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1641
+    },
+    {
+      "rule": "IF Narrative Structure is biographical, Creative Aspects include fictional elements, Character Development is multifaceted, Visual Elements are crucial, Themes and Messages are relevant, Biographical Accuracy vs. Fictionalization balance is maintained, Emotional Impact is strong, Execution Issues exist, Genre Expectations are met but not exceeded, Competition in the Genre is high, Critical Reception is mixed, Nominating Agencies' Preferences do not align THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2341
+    },
+    {
+      "rule": "IF (Lack of Complex Themes AND Bland Character Development AND Formulaic Plot AND Weak Dialogue and Humor AND Inconsistent Resolution AND Subsequent Events Seem Trivial or Predictable AND Limited Use of Music) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0411
+    },
+    {
+      "rule": "IF (Complex Plot Arc AND Character Development AND Limited Production Values AND Predictable Resolution AND Genre Focus ON Comedy) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.279
+    },
+    {
+      "rule": "IF Generic Plot Structure AND Overreliance on Genre Tropes AND Weak Character Development AND Lack of Narrative Innovation AND Superficial Themes THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0711
+    },
+    {
+      "rule": "IF Narrative Complexity and Emotional Depth AND Character Development AND Themes and Social Comment AND Cinematography and Production Quality THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1306
+    },
+    {
+      "rule": "IF (Psychological Depth is well-articulated but lacks groundbreaking treatment AND Character Development is compelling but lacks nuanced inner conflict AND Themes of Mental Health are solid but not exceptionally profound AND Narrative Structure is standard for psychological thrillers AND Visual Elements are striking but not visually groundbreaking AND Impact on Society/Culture is limited AND Critical Reception is competent but lacks universal appeal) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1609
+    },
+    {
+      "rule": "IF (predictable AND unoriginal AND straightforward narrative AND limited character development AND lacks profound themes AND no significant cultural impact) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3819
+    },
+    {
+      "rule": "IF narrative structure is episodic without a cohesive arc or climactic resolution, AND character development is slow-paced and driven by external events rather than deep introspection, AND themes are explored superficially without significant depth or nuance, AND creative execution lacks cinematic flair or innovative approaches, THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1913
+    },
+    {
+      "rule": "IF (Simple Plot AND Generic Themes AND Limited Depth of Characterization AND Lack of Intellectual or Artistic Merit AND Conventional Setting and Genre) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0515
+    },
+    {
+      "rule": "IF plot follows familiar themes of disaster, end-of-times scenarios, and survival narratives with global-scale upheaval AND character development is shallow AND creative elements are heavily reliant on preexisting disaster tropes rather than presenting a novel or groundbreaking worldview AND subtext and symbolism are straightforward without substantial depth AND cinematography and technical aspects do not stand out in a distinctive manner AND narrative complexity lacks layered structure AND impact and relevance lack strong emotional resonance THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3078
+    },
+    {
+      "rule": "IF (Formulaic Plot Structure AND Character Development IS One-Dimensional AND Narrative Complexity IS Confusing AND Execution AND Aesthetics ARE Overused AND Lack of Originality) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1998
+    },
+    {
+      "rule": "IF Narrative Structure is straightforward, Character Development is basic, Dialogue and Writing Style lack nuance, Use of Setting and Atmosphere does not significantly contribute to themes or character development, Themes and Message are simple without depth, Pacing is steady with no significant turning points, Visuals and Cinematography are standard, and Innovation and Originality are lacking THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2911
+    },
+    {
+      "rule": "IF character development is staged rather than organic, themes and beliefs are clich\u00e9, plot structure is straightforward and predictable, dialogue lacks subtlety and depth, direction and technical execution lack standout qualities, and impact and originality are lacking THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.2132
+    },
+    {
+      "rule": "IF (Complexity and Scale of Production AND Heroic Elements and Character Development AND Narrative Structure AND Scientific and Conceptual Depth AND Visuals and Effects) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1281
+    },
+    {
+      "rule": "IF (Universal Themes AND Diverse Character Development AND Positive Messaging AND Family-Friendly Tone AND Visual Pizazz AND Cultural Appeal AND Moral Conflict) THEN label = YES.",
+      "outcome": "YES",
+      "perplexity": 1.0663
+    },
+    {
+      "rule": "IF narrative complexity is high and occasionally rushed, character development is weak with unclear motivations, cinematic quality lacks innovation, dialogue is serviceable but not memorable, emotional impact is limited by weak character development, themes are touched upon but not developed meaningfully, and the film does not excel in any specific category enough to stand out among peers THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.3311
+    },
+    {
+      "rule": "IF narrative complexity is lacking AND character depth is underdeveloped AND innovation and originality are insufficient AND execution is subpar AND cinematography and production design are unremarkable AND themes and social commentary are absent THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.0765
+    },
+    {
+      "rule": "IF (relatable characters AND universal themes AND entertaining plot AND creative elements) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.267
+    },
+    {
+      "rule": "IF simple plot structure AND overreliance on humor AND one-dimensional characters AND low stakes AND minimal themes THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.1605
+    },
+    {
+      "rule": "IF (plot complexity and originality are moderate, script quality leans towards exposition, direction balances spectacle over emotional resonance, cinematography is competent but basic, cast performance captures stakes well but lacks depth, themes and depth are straightforward without psychological complexity, audience reception was impactful but not critically acclaimed) THEN label = NO.",
+      "outcome": "NO",
+      "perplexity": 1.4019
+    }
+  ],
+  "memory": "",
+  "alpha": 0.5,
+  "beta": 0.0,
+  "bias": -10.0,
+  "threshold": -10.883798219873515,
+  "validation_result": {
+    "selected": {
+      "fbeta": 0.24421593830334193,
+      "threshold": -10.883798219873515,
+      "precision": 0.2122905027932961,
+      "recall": 0.6129032258064516,
+      "alpha": 0.5,
+      "beta": 0.0,
+      "bias": -10.0,
+      "min_recall": 0.05
+    },
+    "per_floor": [
+      {
+        "fbeta": 0.24421593830334193,
+        "threshold": -10.883798219873515,
+        "precision": 0.2122905027932961,
+        "recall": 0.6129032258064516,
+        "alpha": 0.5,
+        "beta": 0.0,
+        "bias": -10.0,
+        "min_recall": 0.05
+      },
+      {
+        "fbeta": 0.24421593830334193,
+        "threshold": -10.883798219873515,
+        "precision": 0.2122905027932961,
+        "recall": 0.6129032258064516,
+        "alpha": 0.5,
+        "beta": 0.0,
+        "bias": -10.0,
+        "min_recall": 0.1
+      },
+      {
+        "fbeta": 0.24421593830334193,
+        "threshold": -10.883798219873515,
+        "precision": 0.2122905027932961,
+        "recall": 0.6129032258064516,
+        "alpha": 0.5,
+        "beta": 0.0,
+        "bias": -10.0,
+        "min_recall": 0.15
+      }
+    ],
+    "beta": 0.5,
+    "n_reviewed": 0
+  },
+  "ens_platt_file": "ens_platt.joblib",
+  "mod_platt_file": null,
+  "token_counter": {
+    "token_counts": {
+      "openai/qwen2.5-coder:14b": {
+        "provider": "openai",
+        "model": "qwen2.5-coder:14b",
+        "number_of_calls": 1731,
+        "value": 1681378,
+        "is_min_estimate": false,
+        "callers": {
+          "ReasonedRuleMining._reason_one": 346,
+          "ReasonedRuleMining._extract_one": 346,
+          "ReasonedRuleMining._compile_policy": 1,
+          "ReasonedRuleMining._ensemble_vote": 1038
+        }
+      }
+    }
+  },
+  "version": 1
+}

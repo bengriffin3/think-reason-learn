@@ -1,0 +1,1617 @@
+{
+  "tree_name": "vcbench_gptree_local_full",
+  "created_at": "2026-07-21T18:26:28.803702",
+  "classes": [
+    "failed",
+    "successful"
+  ],
+  "save_path": "<PATH>",
+  "params": {
+    "criterion": "gini",
+    "max_depth": 3,
+    "max_node_width": 3,
+    "min_samples_leaf": 3,
+    "llm_semaphore_limit": 1,
+    "min_question_candidates": 3,
+    "max_question_candidates": 5,
+    "n_samples_as_context": 15,
+    "class_ratio": "balanced",
+    "class_weight": "balanced",
+    "decision_threshold": 0.15,
+    "use_critic": false,
+    "qgen_temperature": 0.0,
+    "critic_temperature": 0.0,
+    "qgen_instr_gen_temperature": 0.0,
+    "qanswer_temperature": 0.0,
+    "random_state": 42
+  },
+  "llm_choices": {
+    "qgen_llmc": [
+      {
+        "provider": "openai",
+        "model": "qwen2.5-coder:14b"
+      }
+    ],
+    "critic_llmc": [
+      {
+        "provider": "openai",
+        "model": "qwen2.5-coder:14b"
+      }
+    ],
+    "qanswer_llmc": [
+      {
+        "provider": "openai",
+        "model": "qwen2.5-coder:14b"
+      }
+    ],
+    "qgen_instr_llmc": [
+      {
+        "provider": "openai",
+        "model": "qwen2.5-coder:14b"
+      }
+    ]
+  },
+  "templates": {
+    "qgen_instr_template": "Generate <number_of_questions> discriminative questions per node based on the provided task description and cumulative memory. Each question must be clear, brief, and domain-appropriate for the classification task. Include explicit answer choices (binary or multi-class) that are mutually exclusive and collectively cover likely outcomes. Avoid redundant or trivially correlated questions; promote diverse angles that meaningfully split the data based on the classification task. Treat any provided cumulative memory as soft guidance, not a hard constraint. Do not leak labels or training answers; do not fabricate data or assumptions.",
+    "critic_instructions_template": null
+  },
+  "expert_advice": null,
+  "task_description": "You are an expert in venture capital tasked with identifying successful founders from their unsuccessful counterparts. All founders are sourced from anonymised LinkedIn and Crunchbase profiles of companies that have raised between $100K and $4M in funding. A successful founder is defined as one whose company has achieved either a total funding of over $500M or an exit/IPO valued at over $500M. Given a founder's profile, classify the founder as 'successful' or 'failed'.",
+  "node_counter": 50,
+  "nodes": [
+    {
+      "id": 0,
+      "label": "root",
+      "question": {
+        "value": "What is the primary industry of the founder's startup?",
+        "choices": [
+          "Industrial & Agricultural Machinery Manufacturing",
+          "Clinical & Diagnostic Healthcare",
+          "Legal Services & Law Firms",
+          "Marketing, Advertising & Events",
+          "Technology, Information & Internet Platforms"
+        ],
+        "question_type": "INFERENCE",
+        "df_column": "e1b60610-1c40-47b9-928e-5f2a57a3c9aa",
+        "score": 0.49135300378778735
+      },
+      "questions": [
+        {
+          "value": "What is the primary industry of the founder's startup?",
+          "choices": [
+            "Industrial & Agricultural Machinery Manufacturing",
+            "Clinical & Diagnostic Healthcare",
+            "Legal Services & Law Firms",
+            "Marketing, Advertising & Events",
+            "Technology, Information & Internet Platforms"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "e1b60610-1c40-47b9-928e-5f2a57a3c9aa",
+          "score": 0.49135300378778735
+        },
+        {
+          "value": "What is the highest QS ranking institution of the founder's education?",
+          "choices": [
+            "Top 10",
+            "Top 100",
+            "Top 200+"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "c2b513c4-d5c4-430d-91a5-6bb47cb33579",
+          "score": 0.4955753828123303
+        },
+        {
+          "value": "How long has the founder been in their current role leading a startup?",
+          "choices": [
+            "<2 years",
+            "2-3 years",
+            ">3 years"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "d1db4baf-163b-4393-8903-8886a213d5fd",
+          "score": 0.49576068279941243
+        },
+        {
+          "value": "What is the company size of the founder's primary industry experience?",
+          "choices": [
+            "2-10 employees",
+            "51-200 employees",
+            "1001+ employees"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "57d733c6-7af6-489d-922f-3fd0262695ab",
+          "score": 0.496450157552428
+        },
+        {
+          "value": "Has the founder overseen any acquisitions or led their company through an IPO?",
+          "choices": [
+            "No",
+            "Yes, acquisition only",
+            "Yes, IPO only",
+            "Both"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "a7f3a4a5-bb4b-4a50-8c01-0c0873774db9",
+          "score": null
+        }
+      ],
+      "cumulative_memory": "",
+      "split_ratios": [
+        357,
+        571,
+        109,
+        624,
+        2839
+      ],
+      "gini": 0.5,
+      "class_distribution": {
+        "failed": 4095,
+        "successful": 405
+      },
+      "parent_id": null
+    },
+    {
+      "id": 1,
+      "label": "Industrial & Agricultural Machinery Manufacturing",
+      "question": {
+        "value": "How long has the founder been leading the startup?",
+        "choices": [
+          ">3 years",
+          "<=2 years",
+          "2-3 years"
+        ],
+        "question_type": "INFERENCE",
+        "df_column": "9b4121e3-3e26-4efd-b99e-f00595831dec",
+        "score": 0.4693111549352673
+      },
+      "questions": [
+        {
+          "value": "What is the highest level of education completed by the founder?",
+          "choices": [
+            "Top 10",
+            "Top 100+",
+            "Top 200+"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "b4051611-b5a4-4b3c-829e-acd1941fd94c",
+          "score": 0.48457619050137557
+        },
+        {
+          "value": "How long has the founder been leading the startup?",
+          "choices": [
+            ">3 years",
+            "<=2 years",
+            "2-3 years"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "9b4121e3-3e26-4efd-b99e-f00595831dec",
+          "score": 0.4693111549352673
+        },
+        {
+          "value": "What is the size of the industry or company where the founder was most recently involved?",
+          "choices": [
+            "<200 employees",
+            "201-500 employees",
+            "1001+ employees"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "b0e214ab-dacf-4e72-a650-9b1f2082ab6e",
+          "score": 0.48989916805373224
+        }
+      ],
+      "cumulative_memory": "",
+      "split_ratios": [
+        32,
+        182,
+        143
+      ],
+      "gini": 0.4999975198535722,
+      "class_distribution": {
+        "failed": 325,
+        "successful": 32
+      },
+      "parent_id": 0
+    },
+    {
+      "id": 6,
+      "label": ">3 years",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.0,
+      "class_distribution": {
+        "failed": 32
+      },
+      "parent_id": 1
+    },
+    {
+      "id": 7,
+      "label": "<=2 years",
+      "question": {
+        "value": "What is the employee size range of the startup or company led by the founder?",
+        "choices": [
+          "11-50 employees",
+          "1001+ employees",
+          "201-500 employees"
+        ],
+        "question_type": "INFERENCE",
+        "df_column": "f57a3e68-4574-4eeb-aacd-312eaac39ab8",
+        "score": 0.44704116883861267
+      },
+      "questions": [
+        {
+          "value": "What is the highest ranking institution in which the founder's education was completed?",
+          "choices": [
+            "Top 10",
+            "Top 100",
+            "Top 200+"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "74ef6cad-6665-4043-b78b-2ed32a6e69dd",
+          "score": 0.47162435093794064
+        },
+        {
+          "value": "How many years of professional experience does the founder have in their current industry?",
+          "choices": [
+            "<2 years",
+            "2-3 years",
+            ">9 years"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "631d7eff-b840-4458-b182-b86d18844bd2",
+          "score": null
+        },
+        {
+          "value": "What is the employee size range of the startup or company led by the founder?",
+          "choices": [
+            "11-50 employees",
+            "1001+ employees",
+            "201-500 employees"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "f57a3e68-4574-4eeb-aacd-312eaac39ab8",
+          "score": 0.44704116883861267
+        }
+      ],
+      "cumulative_memory": "",
+      "split_ratios": [
+        32,
+        83,
+        67
+      ],
+      "gini": 0.4988423697064126,
+      "class_distribution": {
+        "failed": 167,
+        "successful": 15
+      },
+      "parent_id": 1
+    },
+    {
+      "id": 9,
+      "label": "11-50 employees",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.0,
+      "class_distribution": {
+        "failed": 32
+      },
+      "parent_id": 7
+    },
+    {
+      "id": 10,
+      "label": "1001+ employees",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.49469237832874213,
+      "class_distribution": {
+        "failed": 74,
+        "successful": 9
+      },
+      "parent_id": 7
+    },
+    {
+      "id": 11,
+      "label": "201-500 employees",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.49999624695064737,
+      "class_distribution": {
+        "failed": 61,
+        "successful": 6
+      },
+      "parent_id": 7
+    },
+    {
+      "id": 8,
+      "label": "2-3 years",
+      "question": {
+        "value": "In what industry does the startup of this founder operate?",
+        "choices": [
+          "Financial Services",
+          "Electronic & Precision Equipment Manufacturing",
+          "Other"
+        ],
+        "question_type": "INFERENCE",
+        "df_column": "b9a737c6-f7ee-476d-b232-c52b39fba33f",
+        "score": 0.44677177561909087
+      },
+      "questions": [
+        {
+          "value": "How many years of professional experience does the founder have in leading startups or similar roles?",
+          "choices": [
+            "<2 years",
+            "2-3 years",
+            ">3 years"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "8fd64b66-d826-4ad7-82a6-f968e181bd7f",
+          "score": 0.4587433782185514
+        },
+        {
+          "value": "What is the highest education institution QS rank for this founder?",
+          "choices": [
+            "Top 10",
+            "Top 50",
+            "Top 100+"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "f8e50af8-99cb-467a-bc4b-ddbb60f7cbd4",
+          "score": 0.48487798130587
+        },
+        {
+          "value": "In what industry does the startup of this founder operate?",
+          "choices": [
+            "Financial Services",
+            "Electronic & Precision Equipment Manufacturing",
+            "Other"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "b9a737c6-f7ee-476d-b232-c52b39fba33f",
+          "score": 0.44677177561909087
+        }
+      ],
+      "cumulative_memory": "This is the root node. No cumulative memory yet.",
+      "split_ratios": [
+        27,
+        60,
+        56
+      ],
+      "gini": 0.4881347612977114,
+      "class_distribution": {
+        "failed": 126,
+        "successful": 17
+      },
+      "parent_id": 1
+    },
+    {
+      "id": 12,
+      "label": "Financial Services",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.38204081632653075,
+      "class_distribution": {
+        "failed": 21,
+        "successful": 6
+      },
+      "parent_id": 8
+    },
+    {
+      "id": 13,
+      "label": "Electronic & Precision Equipment Manufacturing",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.4763705103969753,
+      "class_distribution": {
+        "failed": 52,
+        "successful": 8
+      },
+      "parent_id": 8
+    },
+    {
+      "id": 14,
+      "label": "Other",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.4630080000000001,
+      "class_distribution": {
+        "failed": 53,
+        "successful": 3
+      },
+      "parent_id": 8
+    },
+    {
+      "id": 2,
+      "label": "Clinical & Diagnostic Healthcare",
+      "question": {
+        "value": "Is the founder's highest education level from a top-ranked institution?",
+        "choices": [
+          "Yes",
+          "No"
+        ],
+        "question_type": "INFERENCE",
+        "df_column": "32c9df10-4a46-4868-961a-c9f032a5ed1c",
+        "score": 0.48898483269141024
+      },
+      "questions": [
+        {
+          "value": "Is the founder's highest education level from a top-ranked institution?",
+          "choices": [
+            "Yes",
+            "No"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "32c9df10-4a46-4868-961a-c9f032a5ed1c",
+          "score": 0.48898483269141024
+        },
+        {
+          "value": "Does the founder have over 5 years of professional experience in their startup industry?",
+          "choices": [
+            "Yes",
+            "No"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "956ff702-b440-4246-9262-9e22fba9ac31",
+          "score": 0.49918513295696265
+        },
+        {
+          "value": "Is the founder's primary role in the startup industry directly related to innovation and product development?",
+          "choices": [
+            "Yes",
+            "No"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "1c7d7400-dbaa-4a02-b445-8a362f417f3a",
+          "score": 0.4925829526175365
+        }
+      ],
+      "cumulative_memory": "",
+      "split_ratios": [
+        11,
+        560
+      ],
+      "gini": 0.49930012610414987,
+      "class_distribution": {
+        "failed": 516,
+        "successful": 55
+      },
+      "parent_id": 0
+    },
+    {
+      "id": 15,
+      "label": "Yes",
+      "question": null,
+      "questions": [
+        {
+          "value": "Is the founder's startup in an industry related to Clinical & Diagnostic Healthcare?",
+          "choices": [
+            "Yes",
+            "No",
+            "Other"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "1de89054-84bd-4885-aa9b-8d745da252d6",
+          "score": null
+        },
+        {
+          "value": "How many years of experience does the founder have leading a startup?",
+          "choices": [
+            "Less than 2 years",
+            "2-3 years",
+            "More than 3 years"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "bd2d5162-c143-406b-9ccb-81e7825de162",
+          "score": null
+        },
+        {
+          "value": "Does the founder's highest educational institution rank in the top 10 globally?",
+          "choices": [
+            "Yes",
+            "No",
+            "Unknown"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "36b84fdf-16b8-42f7-b173-af4547e32140",
+          "score": null
+        }
+      ],
+      "cumulative_memory": "",
+      "split_ratios": null,
+      "gini": 0.25154528352593397,
+      "class_distribution": {
+        "failed": 7,
+        "successful": 4
+      },
+      "parent_id": 2
+    },
+    {
+      "id": 16,
+      "label": "No",
+      "question": {
+        "value": "Is the professional experience in the same industry as the startup more than 2 years?",
+        "choices": [
+          "Yes",
+          "No"
+        ],
+        "question_type": "INFERENCE",
+        "df_column": "648ef3d1-0559-4941-b180-c1750ed96272",
+        "score": 0.49616771186762676
+      },
+      "questions": [
+        {
+          "value": "What is the industry of the startup that this founder leads?",
+          "choices": [
+            "Clinical & Diagnostic Healthcare",
+            "Other"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "011088e5-2741-48ea-bd75-d814d4ca0512",
+          "score": 0.4984914788135189
+        },
+        {
+          "value": "Is the institution QS rank of the founder's education less than or equal to 10?",
+          "choices": [
+            "Yes",
+            "No"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "39624a65-df2b-4c60-a2d2-f4d91f9dc857",
+          "score": 0.49645203484591394
+        },
+        {
+          "value": "Is the professional experience in the same industry as the startup more than 2 years?",
+          "choices": [
+            "Yes",
+            "No"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "648ef3d1-0559-4941-b180-c1750ed96272",
+          "score": 0.49616771186762676
+        }
+      ],
+      "cumulative_memory": "",
+      "split_ratios": [
+        136,
+        424
+      ],
+      "gini": 0.4999788348052314,
+      "class_distribution": {
+        "failed": 509,
+        "successful": 51
+      },
+      "parent_id": 2
+    },
+    {
+      "id": 17,
+      "label": "Yes",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.4890087472260647,
+      "class_distribution": {
+        "failed": 120,
+        "successful": 16
+      },
+      "parent_id": 16
+    },
+    {
+      "id": 18,
+      "label": "No",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.49888310737031905,
+      "class_distribution": {
+        "failed": 389,
+        "successful": 35
+      },
+      "parent_id": 16
+    },
+    {
+      "id": 3,
+      "label": "Legal Services & Law Firms",
+      "question": {
+        "value": "How many years of experience does the founder have leading startups?",
+        "choices": [
+          "<5 years",
+          "5-9 years",
+          ">9 years"
+        ],
+        "question_type": "INFERENCE",
+        "df_column": "9d42ee99-b07a-4113-9a6c-d8f77608d61d",
+        "score": 0.21780269261570542
+      },
+      "questions": [
+        {
+          "value": "What is the highest level of education completed by the founder?",
+          "choices": [
+            "BS/MBA/LLB (Institution QS rank <200)",
+            "JD in Law (Institution QS rank 1-200+)",
+            "Other or unspecified"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "18b3d2bf-4b89-4459-8d66-2578082b10db",
+          "score": 0.2208258843527446
+        },
+        {
+          "value": "How many years of experience does the founder have leading startups?",
+          "choices": [
+            "<5 years",
+            "5-9 years",
+            ">9 years"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "9d42ee99-b07a-4113-9a6c-d8f77608d61d",
+          "score": 0.21780269261570542
+        },
+        {
+          "value": "Which industry is the startup primarily focused on?",
+          "choices": [
+            "Legal Services & Law Firms",
+            "Government Policy & Legal Services",
+            "IT Services & Digital Solutions"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "ac44099f-670c-4fc1-b757-1db3e9ce74bb",
+          "score": 0.26258986198201495
+        }
+      ],
+      "cumulative_memory": "No cumulative memory yet. This is the root node.",
+      "split_ratios": [
+        46,
+        49,
+        14
+      ],
+      "gini": 0.26737247573463496,
+      "class_distribution": {
+        "failed": 107,
+        "successful": 2
+      },
+      "parent_id": 0
+    },
+    {
+      "id": 19,
+      "label": "<5 years",
+      "question": {
+        "value": "What is the highest QS rank of institutions attended by this founder?",
+        "choices": [
+          "Top 10",
+          "Top 100",
+          "Top 200+"
+        ],
+        "question_type": "INFERENCE",
+        "df_column": "a7f8494b-2acd-4af1-8d13-be009f28ec5f",
+        "score": 0.27817521812044915
+      },
+      "questions": [
+        {
+          "value": "What is the highest QS rank of institutions attended by this founder?",
+          "choices": [
+            "Top 10",
+            "Top 100",
+            "Top 200+"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "a7f8494b-2acd-4af1-8d13-be009f28ec5f",
+          "score": 0.27817521812044915
+        },
+        {
+          "value": "How many years of experience does the founder have in leading a startup or as CEO/President?",
+          "choices": [
+            "<2 years",
+            "2-3 years",
+            ">3 years"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "aebb6c0c-c6ed-4470-8341-98866aed5f38",
+          "score": null
+        },
+        {
+          "value": "In what industry is the startup led by this founder?",
+          "choices": [
+            "Real Estate & Leasing",
+            "Legal Services & Law Firms",
+            "Other"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "9dbc98d0-659f-4042-839b-c9be2eff4f58",
+          "score": null
+        }
+      ],
+      "cumulative_memory": "",
+      "split_ratios": [
+        18,
+        18,
+        10
+      ],
+      "gini": 0.43146035128889737,
+      "class_distribution": {
+        "failed": 44,
+        "successful": 2
+      },
+      "parent_id": 3
+    },
+    {
+      "id": 22,
+      "label": "Top 10",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.49320636832398657,
+      "class_distribution": {
+        "failed": 16,
+        "successful": 2
+      },
+      "parent_id": 19
+    },
+    {
+      "id": 23,
+      "label": "Top 100",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.0,
+      "class_distribution": {
+        "failed": 18
+      },
+      "parent_id": 19
+    },
+    {
+      "id": 24,
+      "label": "Top 200+",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.0,
+      "class_distribution": {
+        "failed": 10
+      },
+      "parent_id": 19
+    },
+    {
+      "id": 20,
+      "label": "5-9 years",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.0,
+      "class_distribution": {
+        "failed": 49
+      },
+      "parent_id": 3
+    },
+    {
+      "id": 21,
+      "label": ">9 years",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.0,
+      "class_distribution": {
+        "failed": 14
+      },
+      "parent_id": 3
+    },
+    {
+      "id": 4,
+      "label": "Marketing, Advertising & Events",
+      "question": {
+        "value": "What is the institution rank range for the highest degree obtained by the founder?",
+        "choices": [
+          "Top 10",
+          "Top 50",
+          "Top 100+"
+        ],
+        "question_type": "INFERENCE",
+        "df_column": "eb219aa6-0fac-4fe3-ab57-ed5cec4765b8",
+        "score": 0.4446846017931929
+      },
+      "questions": [
+        {
+          "value": "What is the level of education background for the founder?",
+          "choices": [
+            "Undergraduate degree",
+            "Postgraduate certificate or master's degree",
+            "Doctoral degree"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "8b3750ea-d8a0-4489-ad69-71cc6d2102da",
+          "score": 0.46086113752351
+        },
+        {
+          "value": "How many years of professional experience does the founder have in their current industry?",
+          "choices": [
+            "<2 years",
+            "2-3 years",
+            ">3 years"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "beb255ff-dab0-451f-980d-8031563d8476",
+          "score": 0.4582528926522917
+        },
+        {
+          "value": "What is the institution rank range for the highest degree obtained by the founder?",
+          "choices": [
+            "Top 10",
+            "Top 50",
+            "Top 100+"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "eb219aa6-0fac-4fe3-ab57-ed5cec4765b8",
+          "score": 0.4446846017931929
+        }
+      ],
+      "cumulative_memory": "No cumulative memory yet. This is the root node.",
+      "split_ratios": [
+        219,
+        40,
+        365
+      ],
+      "gini": 0.465235384614339,
+      "class_distribution": {
+        "failed": 590,
+        "successful": 34
+      },
+      "parent_id": 0
+    },
+    {
+      "id": 25,
+      "label": "Top 10",
+      "question": {
+        "value": "In which industry does the startup operate?",
+        "choices": [
+          "Financial Services",
+          "Research Services & Market Analysis",
+          "Extractive Industries"
+        ],
+        "question_type": "INFERENCE",
+        "df_column": "a45aa798-9b55-47fa-8710-ccf0076b67ed",
+        "score": 0.4702377087366619
+      },
+      "questions": [
+        {
+          "value": "What is the highest level of education obtained by the founder?",
+          "choices": [
+            "Undergraduate degree",
+            "Postgraduate certificate or master's degree",
+            "Doctoral degree"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "d8aa33ba-4214-4fa4-b137-ef51a8396844",
+          "score": 0.49301767253516904
+        },
+        {
+          "value": "In which industry does the startup operate?",
+          "choices": [
+            "Financial Services",
+            "Research Services & Market Analysis",
+            "Extractive Industries"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "a45aa798-9b55-47fa-8710-ccf0076b67ed",
+          "score": 0.4702377087366619
+        },
+        {
+          "value": "What is the duration of the founder's professional experience in years?",
+          "choices": [
+            "<2 years",
+            "2-3 years",
+            ">3 years"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "3f492d97-f3de-4c0d-8e23-bac7ca5f5172",
+          "score": 0.47457511362925725
+        }
+      ],
+      "cumulative_memory": "No cumulative memory yet. This is the root node.",
+      "split_ratios": [
+        53,
+        70,
+        96
+      ],
+      "gini": 0.496757063469109,
+      "class_distribution": {
+        "failed": 202,
+        "successful": 17
+      },
+      "parent_id": 4
+    },
+    {
+      "id": 28,
+      "label": "Financial Services",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.491943754852438,
+      "class_distribution": {
+        "failed": 47,
+        "successful": 6
+      },
+      "parent_id": 25
+    },
+    {
+      "id": 29,
+      "label": "Research Services & Market Analysis",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.49830989724175223,
+      "class_distribution": {
+        "failed": 63,
+        "successful": 7
+      },
+      "parent_id": 25
+    },
+    {
+      "id": 30,
+      "label": "Extractive Industries",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.42423764695283994,
+      "class_distribution": {
+        "failed": 92,
+        "successful": 4
+      },
+      "parent_id": 25
+    },
+    {
+      "id": 26,
+      "label": "Top 50",
+      "question": {
+        "value": "What is the size of the company associated with the founder's startup?",
+        "choices": [
+          "1001+ employees",
+          "<2 years",
+          "51-200 employees"
+        ],
+        "question_type": "INFERENCE",
+        "df_column": "5403e695-e6d9-4e53-a036-f628d5704051",
+        "score": 0.3770776198147897
+      },
+      "questions": [
+        {
+          "value": "What is the highest level of education completed by the founder?",
+          "choices": [
+            "Undergraduate degree",
+            "Postgraduate certificate or master's degree",
+            "Doctoral degree"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "083f89de-7414-4248-8868-62cba8bb70d1",
+          "score": 0.41210039030449097
+        },
+        {
+          "value": "How long has the founder been in the professional industry?",
+          "choices": [
+            ">3 years",
+            "<2 years",
+            "2-3 years"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "aa7c36a6-52fc-43b8-a52d-512da5d4d29c",
+          "score": 0.49632121090636805
+        },
+        {
+          "value": "What is the size of the company associated with the founder's startup?",
+          "choices": [
+            "1001+ employees",
+            "<2 years",
+            "51-200 employees"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "5403e695-e6d9-4e53-a036-f628d5704051",
+          "score": 0.3770776198147897
+        }
+      ],
+      "cumulative_memory": "",
+      "split_ratios": [
+        18,
+        8,
+        14
+      ],
+      "gini": 0.49830989724175234,
+      "class_distribution": {
+        "failed": 36,
+        "successful": 4
+      },
+      "parent_id": 4
+    },
+    {
+      "id": 31,
+      "label": "1001+ employees",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.4677170115560334,
+      "class_distribution": {
+        "failed": 17,
+        "successful": 1
+      },
+      "parent_id": 26
+    },
+    {
+      "id": 32,
+      "label": "<2 years",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.0,
+      "class_distribution": {
+        "failed": 8
+      },
+      "parent_id": 26
+    },
+    {
+      "id": 33,
+      "label": "51-200 employees",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.39060874089490105,
+      "class_distribution": {
+        "failed": 11,
+        "successful": 3
+      },
+      "parent_id": 26
+    },
+    {
+      "id": 27,
+      "label": "Top 100+",
+      "question": {
+        "value": "How long has the founder been in their current role?",
+        "choices": [
+          "<2 years",
+          "2-3 years",
+          "4-5 years"
+        ],
+        "question_type": "INFERENCE",
+        "df_column": "d3f40b51-348d-4437-9ca8-4bb46d278176",
+        "score": 0.37057590286132014
+      },
+      "questions": [
+        {
+          "value": "What is the highest level of education attained by the founder?",
+          "choices": [
+            "Undergraduate degree",
+            "Postgraduate certificate or master's degree",
+            "Doctoral degree"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "8448b618-1626-4496-ac59-def4386b9194",
+          "score": 0.39370382203352494
+        },
+        {
+          "value": "How long has the founder been in their current role?",
+          "choices": [
+            "<2 years",
+            "2-3 years",
+            "4-5 years"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "d3f40b51-348d-4437-9ca8-4bb46d278176",
+          "score": 0.37057590286132014
+        },
+        {
+          "value": "What industry is the founder's startup in?",
+          "choices": [
+            "Marketing, Advertising & Events",
+            "Financial Services",
+            "Personal Care & Cosmetics",
+            "Management, Strategy & Professional Services",
+            "Real Estate & Leasing",
+            "Venture Capital & Private Equity"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "382f5d82-818a-4fa7-a2fb-1474a6ee2d45",
+          "score": 0.3712337083533313
+        }
+      ],
+      "cumulative_memory": "",
+      "split_ratios": [
+        219,
+        113,
+        33
+      ],
+      "gini": 0.3959330419660114,
+      "class_distribution": {
+        "failed": 352,
+        "successful": 13
+      },
+      "parent_id": 4
+    },
+    {
+      "id": 34,
+      "label": "<2 years",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.45404475747834805,
+      "class_distribution": {
+        "failed": 208,
+        "successful": 11
+      },
+      "parent_id": 27
+    },
+    {
+      "id": 35,
+      "label": "2-3 years",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.26071563515182894,
+      "class_distribution": {
+        "failed": 111,
+        "successful": 2
+      },
+      "parent_id": 27
+    },
+    {
+      "id": 36,
+      "label": "4-5 years",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.0,
+      "class_distribution": {
+        "failed": 33
+      },
+      "parent_id": 27
+    },
+    {
+      "id": 5,
+      "label": "Technology, Information & Internet Platforms",
+      "question": {
+        "value": "What is the highest educational institution rank associated with this founder?",
+        "choices": [
+          "Top 10",
+          "Top 100",
+          "Top 200+"
+        ],
+        "question_type": "INFERENCE",
+        "df_column": "0db15c10-2b29-4874-a665-b6771917e484",
+        "score": 0.49465605719757677
+      },
+      "questions": [
+        {
+          "value": "What is the highest educational institution rank associated with this founder?",
+          "choices": [
+            "Top 10",
+            "Top 100",
+            "Top 200+"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "0db15c10-2b29-4874-a665-b6771917e484",
+          "score": 0.49465605719757677
+        },
+        {
+          "value": "How many years of professional experience does this founder have?",
+          "choices": [
+            "<2 years",
+            "2-3 years",
+            ">3 years"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "da32676e-cc84-4821-b33d-792ee64a5ec0",
+          "score": 0.49598829806655076
+        },
+        {
+          "value": "What is the size of the largest company the founder has worked for?",
+          "choices": [
+            "1001+ employees",
+            "51-200 employees",
+            "<100 employees"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "4879ff7d-45aa-4e99-9ce6-d6a619f886a8",
+          "score": 0.49822196223991766
+        }
+      ],
+      "cumulative_memory": "",
+      "split_ratios": [
+        1075,
+        1291,
+        473
+      ],
+      "gini": 0.4985191127276527,
+      "class_distribution": {
+        "failed": 2557,
+        "successful": 282
+      },
+      "parent_id": 0
+    },
+    {
+      "id": 37,
+      "label": "Top 10",
+      "question": {
+        "value": "Has the founder overseen any acquisitions in their career?",
+        "choices": [
+          "Yes",
+          "No"
+        ],
+        "question_type": "INFERENCE",
+        "df_column": "f8013ad4-4b80-45c1-8263-4c5b624a0486",
+        "score": 0.48935418811757275
+      },
+      "questions": [
+        {
+          "value": "How many years of professional experience does this founder have in total?",
+          "choices": [
+            "<2 years",
+            "2-3 years",
+            ">3 years"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "c39c9cf0-928e-4299-a5e7-691472f2364f",
+          "score": 0.49375658868885325
+        },
+        {
+          "value": "In which industry is the founder leading a startup?",
+          "choices": [
+            "Technology, Information & Internet Platforms",
+            "Non-Profit, NGO & Associations",
+            "Financial Services"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "d31f9078-f9f5-4e03-9dcd-a43d88a25135",
+          "score": 0.4930189827584952
+        },
+        {
+          "value": "Has the founder overseen any acquisitions in their career?",
+          "choices": [
+            "Yes",
+            "No"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "f8013ad4-4b80-45c1-8263-4c5b624a0486",
+          "score": 0.48935418811757275
+        }
+      ],
+      "cumulative_memory": "None yet. This is the root node.",
+      "split_ratios": [
+        54,
+        1021
+      ],
+      "gini": 0.49588859568505295,
+      "class_distribution": {
+        "failed": 961,
+        "successful": 114
+      },
+      "parent_id": 5
+    },
+    {
+      "id": 40,
+      "label": "Yes",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.38204081632653075,
+      "class_distribution": {
+        "failed": 42,
+        "successful": 12
+      },
+      "parent_id": 37
+    },
+    {
+      "id": 41,
+      "label": "No",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.4983412932581659,
+      "class_distribution": {
+        "failed": 919,
+        "successful": 102
+      },
+      "parent_id": 37
+    },
+    {
+      "id": 38,
+      "label": "Top 100",
+      "question": {
+        "value": "What is the industry of the founder's startup?",
+        "choices": [
+          "Technology, Information & Internet Platforms",
+          "Environmental & Waste Services",
+          "Financial Services",
+          "Software Development",
+          "Medical Equipment Manufacturing"
+        ],
+        "question_type": "INFERENCE",
+        "df_column": "b1cf8afa-5dd7-498d-b130-3ec2caf5380f",
+        "score": 0.4952526704433887
+      },
+      "questions": [
+        {
+          "value": "What is the industry of the founder's startup?",
+          "choices": [
+            "Technology, Information & Internet Platforms",
+            "Environmental & Waste Services",
+            "Financial Services",
+            "Software Development",
+            "Medical Equipment Manufacturing"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "b1cf8afa-5dd7-498d-b130-3ec2caf5380f",
+          "score": 0.4952526704433887
+        },
+        {
+          "value": "Does the founder have any notable achievements or recognitions in their professional career?",
+          "choices": [
+            "Yes, IPO only",
+            "No",
+            "NaN (Not Provided)"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "49f719ee-a468-4b24-97db-bb155b846781",
+          "score": null
+        },
+        {
+          "value": "What is the highest level of education attained by the founder?",
+          "choices": [
+            "PhD",
+            "MBA",
+            "BS/BSc",
+            "BBA",
+            "MS/ME"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "5c0a4bc5-0a9a-4efc-a500-ebc359dac1a1",
+          "score": 0.4969394444758873
+        }
+      ],
+      "cumulative_memory": "No cumulative memory yet. This is the root node.",
+      "split_ratios": [
+        1148,
+        4,
+        53,
+        76,
+        10
+      ],
+      "gini": 0.4992,
+      "class_distribution": {
+        "failed": 1183,
+        "successful": 108
+      },
+      "parent_id": 5
+    },
+    {
+      "id": 42,
+      "label": "Technology, Information & Internet Platforms",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.4994027354615378,
+      "class_distribution": {
+        "failed": 1051,
+        "successful": 97
+      },
+      "parent_id": 38
+    },
+    {
+      "id": 43,
+      "label": "Environmental & Waste Services",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.0,
+      "class_distribution": {
+        "failed": 4
+      },
+      "parent_id": 38
+    },
+    {
+      "id": 44,
+      "label": "Financial Services",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.491943754852438,
+      "class_distribution": {
+        "failed": 47,
+        "successful": 6
+      },
+      "parent_id": 38
+    },
+    {
+      "id": 45,
+      "label": "Software Development",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.4858560404265915,
+      "class_distribution": {
+        "failed": 71,
+        "successful": 5
+      },
+      "parent_id": 38
+    },
+    {
+      "id": 46,
+      "label": "Medical Equipment Manufacturing",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.0,
+      "class_distribution": {
+        "failed": 10
+      },
+      "parent_id": 38
+    },
+    {
+      "id": 39,
+      "label": "Top 200+",
+      "question": {
+        "value": "What is the highest level of education obtained by this founder?",
+        "choices": [
+          "PhD",
+          "Master's",
+          "Bachelor's",
+          "Other"
+        ],
+        "question_type": "INFERENCE",
+        "df_column": "8760ae51-c1a7-4a57-8767-12de44992b6f",
+        "score": 0.47301479063855595
+      },
+      "questions": [
+        {
+          "value": "What is the industry of the startup led by this founder?",
+          "choices": [
+            "Financial Services",
+            "Technology, Information & Internet Platforms",
+            "Software Development",
+            "IT Services & Digital Solutions"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "93854ee0-3a2d-4c23-a5bf-cbc618dc0cbe",
+          "score": 0.4747415500005
+        },
+        {
+          "value": "What is the highest level of education obtained by this founder?",
+          "choices": [
+            "PhD",
+            "Master's",
+            "Bachelor's",
+            "Other"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "8760ae51-c1a7-4a57-8767-12de44992b6f",
+          "score": 0.47301479063855595
+        },
+        {
+          "value": "Does the founder have any experience leading an acquisition as a CEO or Co-Founder?",
+          "choices": [
+            "Yes, IPO only",
+            "Yes, acquisition only",
+            "No"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "9903b369-785a-4f31-a3d1-c2abef5e237c",
+          "score": 0.4757222814331488
+        }
+      ],
+      "cumulative_memory": "This is the root node.",
+      "split_ratios": [
+        50,
+        171,
+        241,
+        11
+      ],
+      "gini": 0.4819630411218575,
+      "class_distribution": {
+        "failed": 413,
+        "successful": 60
+      },
+      "parent_id": 5
+    },
+    {
+      "id": 47,
+      "label": "PhD",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.476776159334126,
+      "class_distribution": {
+        "failed": 47,
+        "successful": 3
+      },
+      "parent_id": 39
+    },
+    {
+      "id": 48,
+      "label": "Master's",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.45823312301998753,
+      "class_distribution": {
+        "failed": 145,
+        "successful": 26
+      },
+      "parent_id": 39
+    },
+    {
+      "id": 49,
+      "label": "Bachelor's",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.4870772527619913,
+      "class_distribution": {
+        "failed": 212,
+        "successful": 29
+      },
+      "parent_id": 39
+    },
+    {
+      "id": 50,
+      "label": "Other",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.42626031892899996,
+      "class_distribution": {
+        "failed": 9,
+        "successful": 2
+      },
+      "parent_id": 39
+    }
+  ],
+  "frontier": [],
+  "token_counter": {
+    "token_counts": {
+      "openai/qwen2.5-coder:14b": {
+        "provider": "openai",
+        "model": "qwen2.5-coder:14b",
+        "number_of_calls": 49233,
+        "value": 25072524,
+        "is_min_estimate": false,
+        "callers": {
+          "GPTree.set_tasks": 1,
+          "GPTree._generate_questions": 17,
+          "GPTree._answer_question_for_row": 49215
+        }
+      }
+    }
+  }
+}

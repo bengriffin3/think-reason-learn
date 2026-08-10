@@ -1,0 +1,98 @@
+[
+  {
+    "qid": "c01_prior_exit",
+    "text": "Does the founder have prior exits (IPOs, acquisitions) under their belt?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder-14b/seed_0"
+  },
+  {
+    "qid": "c02_big_exit",
+    "text": "Has the founder overseen acquisitions valued at over $150M?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder-14b/seed_3"
+  },
+  {
+    "qid": "c03_qs_top50_uni",
+    "text": "Did the founder attend a QS top 50 university?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder-14b/seed_0"
+  },
+  {
+    "qid": "c04_phd",
+    "text": "Is the founder's highest degree a PhD or higher?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder-14b/seed_0"
+  },
+  {
+    "qid": "c05_prior_ceo_1000",
+    "text": "Has the founder held a CEO role in a company with over 1,000 employees?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder-14b/seed_0"
+  },
+  {
+    "qid": "c06_vc_pe",
+    "text": "Has the founder been involved in venture capital or private equity?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder-14b/seed_0"
+  },
+  {
+    "qid": "c07_prior_leadership",
+    "text": "Did the founder hold any leadership roles before starting their current startup?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder-14b/seed_0"
+  },
+  {
+    "qid": "c08_10k_employees",
+    "text": "Has the founder worked in companies with over 10,000 employees?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder-14b/seed_0"
+  },
+  {
+    "qid": "c09_advisor_board",
+    "text": "Did the founder serve as an advisor or board member for startups?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder-14b/seed_0"
+  },
+  {
+    "qid": "c10_tech_bg",
+    "text": "Does the founder have a background in engineering or technical fields?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder-14b/seed_0"
+  },
+  {
+    "qid": "c11_multi_industry",
+    "text": "Does the founder have experience in multiple industries (3+)?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder-14b/seed_0"
+  },
+  {
+    "qid": "c12_serial_founder",
+    "text": "Has the founder founded a startup in their industry before?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder-14b/seed_1"
+  },
+  {
+    "qid": "c13_clinical_rnd",
+    "text": "Has the founder been involved in clinical research or development?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder-14b/seed_1"
+  },
+  {
+    "qid": "c14_academic_role",
+    "text": "Has the founder held a role as an Associate Professor or Scientist?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder-14b/seed_2"
+  },
+  {
+    "qid": "c15_bs_or_lower",
+    "text": "Is the founder's highest degree a BS or lower?",
+    "expected_direction": -1,
+    "source": "qwen2.5-coder-14b/seed_0"
+  },
+  {
+    "qid": "c16_creative_field",
+    "text": "Is the founder's professional experience primarily in creative fields?",
+    "expected_direction": -1,
+    "source": "qwen2.5-coder-14b/seed_3"
+  }
+]

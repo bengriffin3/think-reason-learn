@@ -1,0 +1,131 @@
+{
+  "name": "rrm_local_full",
+  "reason_llmc": [
+    {
+      "provider": "openai",
+      "model": "qwen2.5-coder:14b"
+    }
+  ],
+  "extract_llmc": [
+    {
+      "provider": "openai",
+      "model": "qwen2.5-coder:14b"
+    }
+  ],
+  "predict_llmc": [
+    {
+      "provider": "openai",
+      "model": "qwen2.5-coder:14b"
+    }
+  ],
+  "reason_temperature": 1.0,
+  "predict_temperature": 0.0,
+  "llm_semaphore_limit": 1,
+  "config": {
+    "perplexity_threshold": 1.6,
+    "ensemble_size": 3,
+    "precision_voting_threshold": 0.5,
+    "ensemble_confidence_threshold": 0.8,
+    "final_confidence_threshold": 0.6,
+    "enable_final_confidence_check": false,
+    "use_harsh": true,
+    "harsh_level": "strict",
+    "beta": 0.5,
+    "recall_floors": [
+      0.05,
+      0.1,
+      0.15
+    ],
+    "weights_alpha_range": [
+      0.0,
+      5.0
+    ],
+    "weights_beta_range": [
+      0.0,
+      5.0
+    ],
+    "weights_bias_range": [
+      -10.0,
+      10.0
+    ],
+    "weights_n_points": 11,
+    "weights_thresh_points": 100,
+    "use_memory": false,
+    "memory_update_interval": 50,
+    "random_state": 42
+  },
+  "task_description": "You are an expert in venture capital tasked with identifying successful founders from their unsuccessful counterparts. All founders are sourced from anonymised LinkedIn and Crunchbase profiles of companies that have raised between $100K and $4M in funding. A successful founder is defined as one whose company has achieved either a total funding of over $500M or an exit/IPO valued at over $500M.",
+  "policy": "For YES: IF ((Diverse Educational Background AND Extensive Career Experience IN Executive Leadership Roles AND Strategic Versatility) OR (PhD and MS in Relevant Field AND Long Research Scientist and Engineer Experience AND Industry Alignment) OR (Industry = Renewable Energy & Climate Tech AND Versatility Across Multiple Industries AND Leadership Roles AND Long-Term Industry Experience AND Business Acumen) OR \n(Educational Background FROM a Top 30 Globally Ranked Institution AND Professional Experience IN Product Management and Software Engineering in the tech industry AND Involvement in a Startup within a High-Growth Sector)) THEN label = YES.\n\nFor NO: IF ((Educational Background is MSc in Telecommunications Engineering From an institution ranked >200 OR Industry Focus is Wellness And Community Health With No Successful Startups) OR (Industry Experience is Diverse AND Time Horizon for Each Role is No More Than 3 Years AND Educational Degree is Graphic Communications AND Lack of Leadership Roles)) THEN label = NO.",
+  "rules": [],
+  "memory": "",
+  "alpha": 0.5,
+  "beta": 0.0,
+  "bias": -10.0,
+  "threshold": -11.176853269913563,
+  "validation_result": {
+    "selected": {
+      "fbeta": 0.19115549215406563,
+      "threshold": -11.176853269913563,
+      "precision": 0.17290322580645162,
+      "recall": 0.3308641975308642,
+      "alpha": 0.5,
+      "beta": 0.0,
+      "bias": -10.0,
+      "min_recall": 0.05
+    },
+    "per_floor": [
+      {
+        "fbeta": 0.19115549215406563,
+        "threshold": -11.176853269913563,
+        "precision": 0.17290322580645162,
+        "recall": 0.3308641975308642,
+        "alpha": 0.5,
+        "beta": 0.0,
+        "bias": -10.0,
+        "min_recall": 0.05
+      },
+      {
+        "fbeta": 0.19115549215406563,
+        "threshold": -11.176853269913563,
+        "precision": 0.17290322580645162,
+        "recall": 0.3308641975308642,
+        "alpha": 0.5,
+        "beta": 0.0,
+        "bias": -10.0,
+        "min_recall": 0.1
+      },
+      {
+        "fbeta": 0.19115549215406563,
+        "threshold": -11.176853269913563,
+        "precision": 0.17290322580645162,
+        "recall": 0.3308641975308642,
+        "alpha": 0.5,
+        "beta": 0.0,
+        "bias": -10.0,
+        "min_recall": 0.15
+      }
+    ],
+    "beta": 0.5,
+    "n_reviewed": 0
+  },
+  "ens_platt_file": "ens_platt.joblib",
+  "mod_platt_file": null,
+  "token_counter": {
+    "token_counts": {
+      "openai/qwen2.5-coder:14b": {
+        "provider": "openai",
+        "model": "qwen2.5-coder:14b",
+        "number_of_calls": 22501,
+        "value": 14041786,
+        "is_min_estimate": false,
+        "callers": {
+          "ReasonedRuleMining._reason_one": 4500,
+          "ReasonedRuleMining._extract_one": 4500,
+          "ReasonedRuleMining._compile_policy": 1,
+          "ReasonedRuleMining._ensemble_vote": 13500
+        }
+      }
+    }
+  },
+  "version": 1
+}

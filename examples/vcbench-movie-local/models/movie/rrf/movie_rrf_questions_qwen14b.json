@@ -1,0 +1,86 @@
+[
+  {
+    "qid": "q00",
+    "text": "Does the film explore complex themes or social issues?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder:14b"
+  },
+  {
+    "qid": "q01",
+    "text": "Are there multiple layers to the main characters' development?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder:14b"
+  },
+  {
+    "qid": "q02",
+    "text": "Is the narrative driven by a compelling and original plot?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder:14b"
+  },
+  {
+    "qid": "q03",
+    "text": "Does the film offer a distinctive perspective or point of view?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder:14b"
+  },
+  {
+    "qid": "q04",
+    "text": "Are there significant conflicts or challenges that the protagonist(s) face?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder:14b"
+  },
+  {
+    "qid": "q05",
+    "text": "Is the setting integral to the story's progression?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder:14b"
+  },
+  {
+    "qid": "q06",
+    "text": "Does the film have a strong visual style or cinematography?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder:14b"
+  },
+  {
+    "qid": "q07",
+    "text": "Are there memorable dialogue exchanges that contribute to the narrative?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder:14b"
+  },
+  {
+    "qid": "q08",
+    "text": "Does the film tackle historical events or periods in depth?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder:14b"
+  },
+  {
+    "qid": "q09",
+    "text": "Is there a notable musical score or sound design that enhances the atmosphere?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder:14b"
+  },
+  {
+    "qid": "q10",
+    "text": "Are there moments of intense emotion or psychological depth?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder:14b"
+  },
+  {
+    "qid": "q11",
+    "text": "Does the film challenge societal norms or expectations?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder:14b"
+  },
+  {
+    "qid": "q12",
+    "text": "Is there a subplot or secondary storyline that adds complexity to the main plot?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder:14b"
+  },
+  {
+    "qid": "q13",
+    "text": "Does the film have a profound impact on its audience through its message?",
+    "expected_direction": 1,
+    "source": "qwen2.5-coder:14b"
+  }
+]

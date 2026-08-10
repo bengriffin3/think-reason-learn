@@ -1,0 +1,531 @@
+{
+  "tree_name": "movie_gptree_qwen14b",
+  "created_at": "2026-08-07T15:00:33.027787",
+  "classes": [
+    "nominated",
+    "not nominated"
+  ],
+  "save_path": "<PATH>",
+  "params": {
+    "criterion": "gini",
+    "max_depth": 3,
+    "max_node_width": 3,
+    "min_samples_leaf": 8,
+    "llm_semaphore_limit": 1,
+    "min_question_candidates": 3,
+    "max_question_candidates": 5,
+    "n_samples_as_context": 15,
+    "class_ratio": "balanced",
+    "class_weight": "balanced",
+    "decision_threshold": 0.5,
+    "use_critic": false,
+    "qgen_temperature": 0.0,
+    "critic_temperature": 0.0,
+    "qgen_instr_gen_temperature": 0.0,
+    "qanswer_temperature": 0.0,
+    "random_state": 42
+  },
+  "llm_choices": {
+    "qgen_llmc": [
+      {
+        "provider": "openai",
+        "model": "qwen2.5-coder:14b"
+      }
+    ],
+    "critic_llmc": [
+      {
+        "provider": "openai",
+        "model": "qwen2.5-coder:14b"
+      }
+    ],
+    "qanswer_llmc": [
+      {
+        "provider": "openai",
+        "model": "qwen2.5-coder:14b"
+      }
+    ],
+    "qgen_instr_llmc": [
+      {
+        "provider": "openai",
+        "model": "qwen2.5-coder:14b"
+      }
+    ]
+  },
+  "templates": {
+    "qgen_instr_template": "For each node in the decision tree, generate <number_of_questions> discriminative questions based on the plot summary provided. Each question should be clear, brief, and domain-appropriate for classifying films as either 'nominated' or 'not nominated'. Include explicit answer choices (binary or multi-class) that are mutually exclusive and collectively cover likely outcomes. Avoid redundant or trivially correlated questions; instead, promote diverse angles that meaningfully split the data based on narrative and creative qualities. Consider any cumulative memory when generating questions but treat it as soft guidance, not a hard constraint. Do not leak labels or training answers; do not fabricate data or assumptions.",
+    "critic_instructions_template": null
+  },
+  "expert_advice": null,
+  "task_description": "You are an expert film critic and awards judge. Each film is described by a free-text plot summary. Given a summary, classify the film as 'nominated' (it earned a major award nomination) or 'not nominated', judging purely from the narrative and creative qualities visible in the summary.",
+  "node_counter": 11,
+  "nodes": [
+    {
+      "id": 0,
+      "label": "root",
+      "question": {
+        "value": "Is the main character involved in criminal activities?",
+        "choices": [
+          "Yes",
+          "No"
+        ],
+        "question_type": "INFERENCE",
+        "df_column": "2b994543-41dc-4166-8436-e4f61f84dd40",
+        "score": 0.4835168960133768
+      },
+      "questions": [
+        {
+          "value": "Does the film take place in a historical or contemporary setting?",
+          "choices": [
+            "Historical",
+            "Contemporary"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "7171b3d3-234f-4e77-b228-566a48938dd4",
+          "score": 0.48956192166455875
+        },
+        {
+          "value": "Is the main character involved in criminal activities?",
+          "choices": [
+            "Yes",
+            "No"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "2b994543-41dc-4166-8436-e4f61f84dd40",
+          "score": 0.4835168960133768
+        },
+        {
+          "value": "Does the film explore supernatural or fantasy elements?",
+          "choices": [
+            "Yes",
+            "No"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "d1c70b16-808f-439f-ae88-68a12c6c84f1",
+          "score": 0.48402340154133683
+        },
+        {
+          "value": "Is there a strong emphasis on character development and relationships?",
+          "choices": [
+            "Yes",
+            "No"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "79f084ac-54a0-43dc-8404-8757bdfc923a",
+          "score": 0.4960695146011446
+        },
+        {
+          "value": "Does the film feature complex plot twists or multiple storylines?",
+          "choices": [
+            "Yes",
+            "No"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "7597f701-8266-46d0-b0e7-f291256f1da6",
+          "score": 0.4835168960133768
+        }
+      ],
+      "cumulative_memory": "root node",
+      "split_ratios": [
+        113,
+        237
+      ],
+      "gini": 0.5,
+      "class_distribution": {
+        "nominated": 63,
+        "not nominated": 287
+      },
+      "parent_id": null
+    },
+    {
+      "id": 1,
+      "label": "Yes",
+      "question": {
+        "value": "Is the film set in a contemporary time frame?",
+        "choices": [
+          "Yes",
+          "No"
+        ],
+        "question_type": "INFERENCE",
+        "df_column": "1d5c9781-4e70-40d4-8ec7-0026cfa8ee67",
+        "score": 0.4373180145833105
+      },
+      "questions": [
+        {
+          "value": "Does the film involve significant themes related to drug addiction or recovery?",
+          "choices": [
+            "Yes",
+            "No"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "aba162e5-4d79-421a-9446-632e1f6e3f80",
+          "score": 0.4527621658712969
+        },
+        {
+          "value": "Is the film set in a contemporary time frame?",
+          "choices": [
+            "Yes",
+            "No"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "1d5c9781-4e70-40d4-8ec7-0026cfa8ee67",
+          "score": 0.4373180145833105
+        },
+        {
+          "value": "Does the plot focus on characters' moral or ethical dilemmas?",
+          "choices": [
+            "Yes",
+            "No"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "bd439df0-9dc5-4fab-b787-50b71b42dea7",
+          "score": 0.45536910122879937
+        }
+      ],
+      "cumulative_memory": "",
+      "split_ratios": [
+        77,
+        36
+      ],
+      "gini": 0.4557038640188178,
+      "class_distribution": {
+        "nominated": 12,
+        "not nominated": 101
+      },
+      "parent_id": 0
+    },
+    {
+      "id": 3,
+      "label": "Yes",
+      "question": {
+        "value": "Does the film involve any supernatural or fantastical elements?",
+        "choices": [
+          "Yes",
+          "No"
+        ],
+        "question_type": "INFERENCE",
+        "df_column": "daf357c0-00af-48a8-9b6f-2e360b842d76",
+        "score": 0.3930222545312752
+      },
+      "questions": [
+        {
+          "value": "Is the plot primarily set in a contemporary or historical setting?",
+          "choices": [
+            "Contemporary",
+            "Historical"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "25edbf5b-ccc4-4c30-8693-8edacafe4122",
+          "score": 0.40091184422147624
+        },
+        {
+          "value": "Does the film involve any supernatural or fantastical elements?",
+          "choices": [
+            "Yes",
+            "No"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "daf357c0-00af-48a8-9b6f-2e360b842d76",
+          "score": 0.3930222545312752
+        },
+        {
+          "value": "Are there any themes of crime, law enforcement, or moral corruption in the plot?",
+          "choices": [
+            "Yes",
+            "No"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "333cea18-1a67-448d-84e4-5502e03901b3",
+          "score": null
+        }
+      ],
+      "cumulative_memory": "",
+      "split_ratios": [
+        23,
+        54
+      ],
+      "gini": 0.4014018960068946,
+      "class_distribution": {
+        "nominated": 6,
+        "not nominated": 71
+      },
+      "parent_id": 1
+    },
+    {
+      "id": 5,
+      "label": "Yes",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.28423872131090144,
+      "class_distribution": {
+        "nominated": 1,
+        "not nominated": 22
+      },
+      "parent_id": 3
+    },
+    {
+      "id": 6,
+      "label": "No",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.43326879391156825,
+      "class_distribution": {
+        "nominated": 5,
+        "not nominated": 49
+      },
+      "parent_id": 3
+    },
+    {
+      "id": 4,
+      "label": "No",
+      "question": null,
+      "questions": [
+        {
+          "value": "Is the plot primarily set in a historical period?",
+          "choices": [
+            "Yes",
+            "No",
+            "Contemporary"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "309b6bfe-e51e-42ca-a780-66d361874277",
+          "score": null
+        }
+      ],
+      "cumulative_memory": "",
+      "split_ratios": null,
+      "gini": 0.49891833423472143,
+      "class_distribution": {
+        "nominated": 6,
+        "not nominated": 30
+      },
+      "parent_id": 1
+    },
+    {
+      "id": 2,
+      "label": "No",
+      "question": {
+        "value": "Does the plot primarily focus on historical events or periods?",
+        "choices": [
+          "Yes",
+          "No"
+        ],
+        "question_type": "INFERENCE",
+        "df_column": "4568aeaf-5ed6-41b9-b80b-0a1ca7d4fb0d",
+        "score": 0.4877430659812942
+      },
+      "questions": [
+        {
+          "value": "Does the plot primarily focus on historical events or periods?",
+          "choices": [
+            "Yes",
+            "No"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "4568aeaf-5ed6-41b9-b80b-0a1ca7d4fb0d",
+          "score": 0.4877430659812942
+        },
+        {
+          "value": "Are there significant romantic subplots present in the film?",
+          "choices": [
+            "Yes",
+            "No"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "dc1983ed-b4aa-488e-ab79-7834d2eca2df",
+          "score": 0.4925528654612321
+        },
+        {
+          "value": "Does the film explore character development extensively through dialogue and actions?",
+          "choices": [
+            "Yes",
+            "No"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "d74e636d-ca8d-454d-a162-99e799b53872",
+          "score": 0.4912413141413649
+        }
+      ],
+      "cumulative_memory": "root node",
+      "split_ratios": [
+        16,
+        221
+      ],
+      "gini": 0.4938664465643402,
+      "class_distribution": {
+        "nominated": 51,
+        "not nominated": 186
+      },
+      "parent_id": 0
+    },
+    {
+      "id": 7,
+      "label": "Yes",
+      "question": null,
+      "questions": [
+        {
+          "value": "Is the plot centered on a historical event or figure?",
+          "choices": [
+            "Yes",
+            "No"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "a0acfce4-c6f9-47aa-9886-6a6990d8bd9b",
+          "score": null
+        },
+        {
+          "value": "Does the film explore themes of national identity and conflict?",
+          "choices": [
+            "Yes",
+            "No"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "6bd5c6f3-a25e-4d89-9618-2ded9d0a2cff",
+          "score": null
+        },
+        {
+          "value": "Is there a significant subplot involving a supernatural or otherworldly element?",
+          "choices": [
+            "Yes",
+            "No"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "7b143609-4268-416b-9885-4298693c44c4",
+          "score": null
+        }
+      ],
+      "cumulative_memory": "",
+      "split_ratios": null,
+      "gini": 0.3922193877551021,
+      "class_distribution": {
+        "nominated": 6,
+        "not nominated": 10
+      },
+      "parent_id": 2
+    },
+    {
+      "id": 8,
+      "label": "No",
+      "question": {
+        "value": "Is the film set in a historical context?",
+        "choices": [
+          "Yes",
+          "No",
+          "Contemporary"
+        ],
+        "question_type": "INFERENCE",
+        "df_column": "4a6eb3e6-364e-429a-9673-ad28bb02af45",
+        "score": 0.4886045401758353
+      },
+      "questions": [
+        {
+          "value": "Is the film set in a historical context?",
+          "choices": [
+            "Yes",
+            "No",
+            "Contemporary"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "4a6eb3e6-364e-429a-9673-ad28bb02af45",
+          "score": 0.4886045401758353
+        },
+        {
+          "value": "Does the plot involve a significant action sequence or adventure element?",
+          "choices": [
+            "Yes",
+            "No",
+            "Mystery"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "a39334f6-0ecb-426f-a2ba-1beca0c0e82a",
+          "score": null
+        },
+        {
+          "value": "Are there strong character relationships and emotional development arcs throughout the film?",
+          "choices": [
+            "Yes",
+            "No",
+            "Minimal"
+          ],
+          "question_type": "INFERENCE",
+          "df_column": "012f93ac-fc11-4ead-92bd-0a20389ac32e",
+          "score": null
+        }
+      ],
+      "cumulative_memory": "",
+      "split_ratios": [
+        37,
+        122,
+        62
+      ],
+      "gini": 0.49710321642865507,
+      "class_distribution": {
+        "nominated": 45,
+        "not nominated": 176
+      },
+      "parent_id": 2
+    },
+    {
+      "id": 9,
+      "label": "Yes",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.4498225797858171,
+      "class_distribution": {
+        "nominated": 11,
+        "not nominated": 26
+      },
+      "parent_id": 8
+    },
+    {
+      "id": 10,
+      "label": "No",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.49850601213800516,
+      "class_distribution": {
+        "nominated": 24,
+        "not nominated": 98
+      },
+      "parent_id": 8
+    },
+    {
+      "id": 11,
+      "label": "Contemporary",
+      "question": null,
+      "questions": [],
+      "cumulative_memory": null,
+      "split_ratios": null,
+      "gini": 0.4978180893623426,
+      "class_distribution": {
+        "nominated": 10,
+        "not nominated": 52
+      },
+      "parent_id": 8
+    }
+  ],
+  "frontier": [],
+  "token_counter": {
+    "token_counts": {
+      "openai/qwen2.5-coder:14b": {
+        "provider": "openai",
+        "model": "qwen2.5-coder:14b",
+        "number_of_calls": 3786,
+        "value": 4206783,
+        "is_min_estimate": false,
+        "callers": {
+          "GPTree.set_tasks": 1,
+          "GPTree._generate_questions": 7,
+          "GPTree._answer_question_for_row": 3778
+        }
+      }
+    }
+  }
+}
