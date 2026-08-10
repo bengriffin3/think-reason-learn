@@ -63,6 +63,13 @@ examples/vcbench-movie-local/**/__pycache__/
 examples/vcbench-movie-local/**/llm_cache*.jsonl
 examples/vcbench-movie-local/**/raw_responses*.jsonl
 examples/vcbench-movie-local/**/*.log
+# scripts/run_*.py write here; run outputs, caches and fitted bundles are the
+# student's own, never the repo's. precomputed/ holds the reference scores.
+examples/vcbench-movie-local/results/
+examples/vcbench-movie-local/**/predictions_*.jsonl
+examples/vcbench-movie-local/**/*checkpoint*.json
+examples/vcbench-movie-local/**/data.parquet
+examples/vcbench-movie-local/**/records.jsonl
 .private/
 
 vcbench/*

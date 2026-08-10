@@ -28,5 +28,196 @@ sleep/idle and multi-run appends, so they over- or under-state true
 throughput. A short measured run is the only trustworthy basis for the
 README's runtime table.
 
-NOTE: implementation lands in Stage 6. Do not run before then.
+Each method runs into a throwaway directory with an empty cache, so nothing
+here reads or writes `precomputed/*_scores.csv` or `models/`. The only file it
+touches is `precomputed/timings.json`.
+
+The extrapolation is linear in rows touched. That is exact for RRF (rows x
+questions) and close for PI and RRM's scoring stage; it under-states GPTree,
+whose fit re-answers questions at every node it opens, and it assumes the model
+keeps the same throughput on a longer text. Treat the numbers as the right
+order of magnitude for planning, not a promise.
+
+Usage — the four methods on Movie (~30-60 minutes, 100 films each):
+    python calibrate_timings.py --dataset movie
+
+Usage — one method, smaller slice:
+    python calibrate_timings.py --dataset movie --methods gptree -n 40
+
+Usage — VCBench (needs the CSV from vcbench.com):
+    VCBENCH_DATA=~/.trl-data/vcbench/vcbench_final_public.csv \\
+      python calibrate_timings.py --dataset vcbench
 """
+from __future__ import annotations
+import argparse, json, platform, socket, tempfile, time
+from pathlib import Path
+
+import _runner_common as rc
+
+METHODS = ["pi", "rrf", "gptree", "rrm"]
+OUT_PATH = rc.EXAMPLE_ROOT / "precomputed" / "timings.json"
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    ap = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--dataset", choices=sorted(rc.DATASETS), default="movie")
+    ap.add_argument("--data", type=Path, default=None,
+                    help="records file; Movie defaults to the HuggingFace fetch")
+    ap.add_argument("-n", "--n-calibration", type=int, default=100,
+                    help="rows in the calibration slice (default 100)")
+    ap.add_argument("--methods", nargs="+", choices=METHODS, default=METHODS)
+    ap.add_argument("--model", default=rc.DEFAULT_MODEL)
+    ap.add_argument("--concurrency", type=int, default=1)
+    ap.add_argument("--out", type=Path, default=OUT_PATH)
+    ap.add_argument("--merge", action="store_true",
+                    help="keep entries already in the output file for methods not run now")
+    return ap.parse_args(argv)
+
+
+def machine_label() -> str:
+    """Hostname plus whatever the platform will tell us about the chip."""
+    chip = platform.processor() or platform.machine()
+    if platform.system() == "Darwin":
+        # platform.processor() is just "arm" on Apple silicon; the release
+        # string plus machine type is the most it will give us without shelling
+        # out to sysctl, and that is enough to tell two boxes apart.
+        chip = f"{platform.machine()} macOS {platform.mac_ver()[0]}"
+    return f"{socket.gethostname()} / {chip}"
+
+
+def full_run_rows(args: argparse.Namespace, spec: rc.DatasetSpec) -> tuple[int, int]:
+    """(rows a full run would fit on, rows it would score) for this dataset."""
+    load_args = argparse.Namespace(
+        dataset=args.dataset, data=args.data, text_field=None, label_field=None,
+        id_field=None, split_field=None, train_value="train", test_value="test",
+        max_chars=None, fit_size=0, limit=0, predict_split="both", seed=42)
+    df = rc.load_frame(load_args, spec)
+    return int((df["split"] == spec.fit_split).sum()), len(df)
+
+
+def projected_calls(method: str, spec: rc.DatasetSpec, n_fit_full: int, n_rows_full: int) -> int:
+    """How many calls a full run of this method would make, at its own defaults.
+
+    Read from each runner's own defaults so this cannot drift from what the
+    runners actually do. Multiplied by the measured `s_per_call`, this is a
+    steadier estimate than scaling a short run's wall-clock — the per-call rate
+    is the stable quantity, the call count is arithmetic.
+    """
+    import importlib
+    import json as _json
+
+    if method == "pi":
+        return rc.estimate_calls("pi", n_fit_full, n_rows_full, n_policies=10)
+    if method == "rrf":
+        shortlist = importlib.import_module("run_rrf").SHIPPED_QUESTIONS.get(spec.name)
+        n_q = len(_json.loads(shortlist.read_text())) if shortlist and shortlist.exists() else 14
+        return rc.estimate_calls("rrf", n_fit_full, n_rows_full, n_questions=n_q)
+    if method == "gptree":
+        defaults = importlib.import_module("run_gptree").TREE_DEFAULTS.get(spec.name, {})
+        return rc.estimate_calls("gptree", defaults.get("fit_size") or n_fit_full,
+                                 n_rows_full, max_depth=3)
+    if method == "rrm":
+        fit_size = importlib.import_module("run_rrm").FIT_SIZES.get(spec.name, 0)
+        return rc.estimate_calls("rrm", fit_size or n_fit_full, n_rows_full)
+    raise ValueError(method)
+
+
+def calibrate_one(method: str, args: argparse.Namespace, touched_full: int) -> dict:
+    """Run one method on the slice in a throwaway directory with an empty cache."""
+    import importlib
+
+    module = importlib.import_module(f"run_{method}")
+    with tempfile.TemporaryDirectory(prefix=f"trl_calib_{method}_") as tmp:
+        argv = ["--dataset", args.dataset, "--model", args.model,
+                "--concurrency", str(args.concurrency),
+                "--fit-size", str(args.n_calibration),
+                "--limit", str(args.n_calibration),
+                "--out-dir", tmp]
+        if args.data:
+            argv += ["--data", str(args.data)]
+        print(f"\n### calibrating {method} on {args.n_calibration} rows "
+              f"(fresh cache in {tmp})\n", flush=True)
+        t0 = time.time()
+        metrics = module.main(argv)
+        wall = time.time() - t0
+
+    calls = int(metrics.get("llm_calls", 0))
+    rows_fit = int(metrics.get("n_fit", 0))
+    rows_scored = int(sum(v["n"] for v in metrics.get("splits", {}).values()))
+    touched = max(rows_fit + rows_scored, 1)
+    return {
+        "calibration_wall_s": round(wall, 1),
+        "calls_made": calls,
+        "s_per_call": round(wall / calls, 3) if calls else None,
+        "extrapolated_full_run_s": int(round(wall * touched_full / touched)),
+        "calibration_rows_fit": rows_fit,
+        "calibration_rows_scored": rows_scored,
+    }
+
+
+def main(argv: list[str] | None = None) -> dict:
+    args = parse_args(argv)
+    rc.setup_logging()
+    rc.env_guard()
+    spec = rc.DATASETS[args.dataset]
+
+    n_fit_full, n_rows_full = full_run_rows(args, spec)
+    print(f"{args.dataset}: a full run fits on {n_fit_full:,} rows and scores "
+          f"{n_rows_full:,}; calibrating on {args.n_calibration}.")
+
+    results: dict[str, dict] = {}
+    if args.merge and args.out.exists():
+        results = json.loads(args.out.read_text()).get("methods", {})
+
+    # Rows a full run touches (fit once, score every row), against the rows the
+    # calibration actually touched — which each run reports back.
+    touched_full = n_fit_full + n_rows_full
+
+    for method in args.methods:
+        try:
+            entry = calibrate_one(method, args, touched_full)
+            calls = projected_calls(method, spec, n_fit_full, n_rows_full)
+            entry["projected_full_calls"] = calls
+            entry["projected_full_run_s"] = (
+                int(round(calls * entry["s_per_call"])) if entry["s_per_call"] else None)
+            results[method] = entry
+            print(f"\n{method}: {entry['calibration_wall_s']:.0f}s for "
+                  f"{entry['calls_made']} calls ({entry['s_per_call']}s each) -> "
+                  f"{rc.human_time(entry['extrapolated_full_run_s'])} scaled by rows, "
+                  f"{rc.human_time(entry['projected_full_run_s'] or 0)} by call count\n")
+        except KeyboardInterrupt:
+            raise
+        except Exception as exc:  # one method failing must not lose the others
+            rc.logger.error("%s calibration failed: %s: %s", method, type(exc).__name__, exc)
+            results[method] = {"error": f"{type(exc).__name__}: {exc}"[:300]}
+
+    payload = {
+        "machine": machine_label(),
+        "model": args.model,
+        "dataset": args.dataset,
+        "n_calibration": args.n_calibration,
+        "n_fit_full": n_fit_full,
+        "n_rows_full": n_rows_full,
+        "methods": results,
+        "captured": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "note": (
+            "Measured on a fresh cache. `s_per_call` is the reliable number — one "
+            "structured completion, and it barely moves between methods. "
+            "`extrapolated_full_run_s` scales the calibration wall-clock by rows "
+            "touched, which under-states GPTree (its fit re-answers questions at "
+            "every node it opens). `projected_full_run_s` is s_per_call times the "
+            "call count a full run would make at each runner's own defaults, and is "
+            "the better basis for a runtime table."),
+    }
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    args.out.write_text(json.dumps(payload, indent=2))
+    print(f"\nWrote {args.out}")
+    total = sum(v.get("projected_full_run_s") or 0 for v in results.values())
+    if total:
+        print(f"All {len(results)} methods, full run, this machine: ~{rc.human_time(total)}")
+    return payload
+
+
+if __name__ == "__main__":
+    main()

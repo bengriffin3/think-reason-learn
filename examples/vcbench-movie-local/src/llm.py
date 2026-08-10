@@ -46,12 +46,19 @@ def _base_llm() -> Any:
     return LogprobsLLM()
 
 
-def get_local_llm(cache_path: str | Path | None = None) -> Any:
+def get_local_llm(
+    cache_path: str | Path | None = None, *, cache_sampled: bool = False
+) -> Any:
     """Build the local-Ollama LLM, optionally wrapped in a restart-safe cache.
 
     Args:
         cache_path: JSONL cache file. Pass one for any run long enough that you
             would not want to redo it from scratch; omit for one-off calls.
+        cache_sampled: Cache `temperature > 0` calls too. Off by default because
+            a request-hash cache collapses repeated draws into one response —
+            see `disk_cache.py`. `scripts/run_rrm.py` turns it on: RRM reasons
+            at temperature 1.0 during fit, and without this an interrupted fit
+            restarts from zero.
     """
     llm = _base_llm()
-    return DiskCache(llm, cache_path) if cache_path else llm
+    return DiskCache(llm, cache_path, cache_sampled=cache_sampled) if cache_path else llm
