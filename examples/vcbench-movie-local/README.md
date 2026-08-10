@@ -61,9 +61,19 @@ benchmark-hygiene decisions:
 
 Raw data is **not** committed to this repo; fetch it yourself:
 
-- **VCBench** — TODO(Stage 4): canonical download link + exact instructions.
-  You need the public split CSV (4,500 founders, ~9% base rate) with columns
-  `founder_uuid`, `success`, `anonymised_prose`.
+- **VCBench** — not publicly downloadable. Request it at
+  [vcbench.com](https://vcbench.com) ("Request data" in the sidebar); access is
+  granted on request. Ask for the public split: 4,500 founders, ~9% base rate,
+  columns `founder_uuid`, `success`, `anonymised_prose`. Save the CSV wherever
+  you like and point the example at it:
+
+  ```bash
+  export VCBENCH_DATA=~/.trl-data/vcbench/vcbench_final_public.csv
+  ```
+
+  The quickstart notebook (`01_quickstart.ipynb`) needs **none** of this — it
+  reads the score CSVs in `precomputed/` and nothing else. You only need the raw
+  data for the live-run notebooks (02 onward) and the `scripts/run_*.py` runs.
 - **Movie** — public HuggingFace dataset, fetched automatically:
 
   ```python
