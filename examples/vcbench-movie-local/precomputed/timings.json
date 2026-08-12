@@ -7,36 +7,50 @@
   "n_rows_full": 2188,
   "methods": {
     "pi": {
-      "calibration_wall_s": 902.0,
-      "calls_made": 372,
-      "s_per_call": 2.425,
-      "extrapolated_full_run_s": 109713,
-      "calibration_rows_fit": 10,
-      "calibration_rows_scored": 20,
+      "calibration_wall_s": 7583.7,
+      "calls_made": 3974,
+      "s_per_call": 1.908,
+      "extrapolated_full_run_s": 92243,
+      "calibration_rows_fit": 100,
+      "calibration_rows_scored": 200,
       "source": "calibrate_timings.py",
-      "contention": "another local benchmark (llama3.1:8b) shared the Ollama server",
       "projected_full_calls": 22026,
-      "projected_full_run_s": 53413
+      "projected_full_run_s": 42026
     },
     "rrf": {
-      "calibration_wall_s": 2333.0,
-      "calls_made": 420,
-      "s_per_call": 5.554,
-      "extrapolated_full_run_s": 283771,
+      "calibration_wall_s": 14923.7,
+      "calls_made": 4158,
+      "s_per_call": 3.589,
+      "extrapolated_full_run_s": 181522,
+      "calibration_rows_fit": 100,
+      "calibration_rows_scored": 200,
+      "source": "calibrate_timings.py",
+      "projected_full_calls": 30632,
+      "projected_full_run_s": 109938
+    },
+    "gptree": {
+      "calibration_wall_s": 3417.4,
+      "calls_made": 1291,
+      "s_per_call": 2.647,
+      "extrapolated_full_run_s": 41567,
+      "calibration_rows_fit": 100,
+      "calibration_rows_scored": 200,
+      "source": "calibrate_timings.py",
+      "projected_full_calls": 7654,
+      "projected_full_run_s": 20260
+    },
+    "rrm": {
+      "calibration_wall_s": 307.8,
+      "calls_made": 111,
+      "s_per_call": 2.773,
+      "extrapolated_full_run_s": 37441,
       "calibration_rows_fit": 10,
       "calibration_rows_scored": 20,
       "source": "calibrate_timings.py",
-      "contention": "another local benchmark (llama3.1:8b) shared the Ollama server",
-      "projected_full_calls": 30632,
-      "projected_full_run_s": 170130
-    },
-    "gptree": {
-      "deferred": "Not measured. A gemma3:27b benchmark took over the Ollama server mid-run and every 14b call queued behind a model swap. Rerun on an idle machine: python calibrate_timings.py --dataset movie --methods gptree rrm --merge"
-    },
-    "rrm": {
-      "deferred": "Not measured. A gemma3:27b benchmark took over the Ollama server mid-run and every 14b call queued behind a model swap. Rerun on an idle machine: python calibrate_timings.py --dataset movie --methods gptree rrm --merge"
+      "projected_full_calls": 8295,
+      "projected_full_run_s": 23002
     }
   },
-  "captured": "2026-08-10T22:14:00",
-  "note": "Measured on a fresh cache, n=10 rows per method rather than the tool's default 100 (four methods at 100 is most of a day of local inference). `s_per_call` is the reliable number; `projected_full_run_s` multiplies it by the call count a full run makes at each runner's defaults and is the right basis for a runtime table; `extrapolated_full_run_s` scales wall-clock by rows and under-states GPTree. Both measured entries were taken while another local benchmark shared this Ollama server, so they are an upper bound: PI's 2.4 s/call projects 14.8 h against a 14.1 h historical full run, but RRF's 5.6 s/call projects 47 h against 32.6 h historically. Rerun on an idle machine before quoting these as the reference: python calibrate_timings.py --dataset movie"
+  "captured": "2026-08-12T19:40:30",
+  "note": "Measured on a fresh cache. `s_per_call` is the reliable number \u2014 one structured completion, and it barely moves between methods. `extrapolated_full_run_s` scales the calibration wall-clock by rows touched, which under-states GPTree (its fit re-answers questions at every node it opens). `projected_full_run_s` is s_per_call times the call count a full run would make at each runner's own defaults, and is the better basis for a runtime table."
 }
