@@ -20,7 +20,10 @@ The key derivation and the on-disk record layout are unchanged from the shim,
 so cache files written by earlier runs stay valid.
 """
 from __future__ import annotations
-import asyncio, hashlib, json, logging
+import asyncio
+import hashlib
+import json
+import logging
 from pathlib import Path
 from typing import Any, List, Tuple
 

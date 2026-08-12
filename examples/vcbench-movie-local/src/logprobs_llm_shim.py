@@ -24,7 +24,10 @@ Google/Anthropic — this is a local-first shim. RRM only makes ONE
 `respond(...)` call at a time, so single-provider is fine.
 """
 from __future__ import annotations
-import asyncio, hashlib, json, os
+import asyncio
+import hashlib
+import json
+import os
 from pathlib import Path
 from typing import Any, List, Type, TypeVar
 import logging

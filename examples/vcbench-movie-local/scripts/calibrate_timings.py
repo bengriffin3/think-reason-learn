@@ -58,7 +58,12 @@ Usage — VCBench (needs the CSV from vcbench.com):
       python calibrate_timings.py --dataset vcbench
 """
 from __future__ import annotations
-import argparse, json, os, platform, tempfile, time
+import argparse
+import json
+import os
+import platform
+import tempfile
+import time
 from pathlib import Path
 
 import _runner_common as rc

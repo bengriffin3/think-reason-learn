@@ -32,24 +32,29 @@ Outputs (under --out-dir):
   predictions.csv             — per-row scores from every model + ensemble
 """
 from __future__ import annotations
-import argparse, json, time, warnings
+import argparse
+import json
+import time
+import warnings
 from pathlib import Path
 
 warnings.filterwarnings("ignore")
 
-import numpy as np
-import pandas as pd
-from sklearn.ensemble import (
+# Imports deliberately after the warnings filter, so sklearn's import-time
+# warnings are suppressed too.
+import numpy as np  # noqa: E402
+import pandas as pd  # noqa: E402
+from sklearn.ensemble import (  # noqa: E402
     ExtraTreesClassifier, HistGradientBoostingClassifier, RandomForestClassifier,
 )
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.impute import SimpleImputer
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import average_precision_score, roc_auc_score
-from sklearn.model_selection import StratifiedKFold
-from sklearn.naive_bayes import GaussianNB
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
+from sklearn.feature_extraction.text import TfidfVectorizer  # noqa: E402
+from sklearn.impute import SimpleImputer  # noqa: E402
+from sklearn.linear_model import LogisticRegression  # noqa: E402
+from sklearn.metrics import average_precision_score, roc_auc_score  # noqa: E402
+from sklearn.model_selection import StratifiedKFold  # noqa: E402
+from sklearn.naive_bayes import GaussianNB  # noqa: E402
+from sklearn.pipeline import make_pipeline  # noqa: E402
+from sklearn.preprocessing import StandardScaler  # noqa: E402
 
 
 def parse_args() -> argparse.Namespace:
@@ -75,7 +80,7 @@ def parse_args() -> argparse.Namespace:
 
 def load_records(path: Path) -> pd.DataFrame:
     if str(path).endswith(".jsonl"):
-        return pd.DataFrame([json.loads(l) for l in path.read_text().splitlines() if l.strip()])
+        return pd.DataFrame([json.loads(line) for line in path.read_text().splitlines() if line.strip()])
     return pd.read_csv(path)
 
 
@@ -297,7 +302,7 @@ def main() -> None:
     (args.out_dir / "metrics.json").write_text(json.dumps(results, indent=2))
     preds_df.to_csv(args.out_dir / "predictions.csv", index=False)
 
-    print(f"\nWrote:")
+    print("\nWrote:")
     print(f"  {args.out_dir / 'metrics.json'}")
     print(f"  {args.out_dir / 'predictions.csv'}")
     print(f"Total wall-clock: {results['wall_clock_s']:.1f}s")

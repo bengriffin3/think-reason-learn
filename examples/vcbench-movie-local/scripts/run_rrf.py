@@ -32,7 +32,11 @@ Outputs (under --out-dir, default results/rrf_<dataset>/):
   llm_cache.jsonl                    the restart cache (never commit it)
 """
 from __future__ import annotations
-import argparse, asyncio, json, random, time
+import argparse
+import asyncio
+import json
+import random
+import time
 from pathlib import Path
 from typing import Literal
 
@@ -261,7 +265,7 @@ async def run(args: argparse.Namespace) -> dict:
             fh.flush()
 
     # Answer matrix, one row per sample, questions in shortlist order.
-    answers = pd.DataFrame([json.loads(l) for l in raw_path.open() if l.strip()])
+    answers = pd.DataFrame([json.loads(line) for line in raw_path.open() if line.strip()])
     answers = answers[answers["error"].isna()]
     matrix = (answers.pivot_table(index="id", columns="qid", values="binary", aggfunc="first")
               .reindex(columns=qids))

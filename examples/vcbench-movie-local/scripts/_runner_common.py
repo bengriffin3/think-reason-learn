@@ -15,7 +15,12 @@ object (`src.llm.get_local_llm`) wrapped in a call counter so black-box fit
 stages still report progress.
 """
 from __future__ import annotations
-import argparse, json, logging, os, sys, time
+import argparse
+import json
+import logging
+import os
+import sys
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Sequence
@@ -181,7 +186,7 @@ def resolve_spec(args: argparse.Namespace) -> DatasetSpec:
 
 def _read_any(path: Path) -> pd.DataFrame:
     if str(path).endswith(".jsonl"):
-        return pd.DataFrame([json.loads(l) for l in path.read_text().splitlines() if l.strip()])
+        return pd.DataFrame([json.loads(line) for line in path.read_text().splitlines() if line.strip()])
     return pd.read_csv(path)
 
 

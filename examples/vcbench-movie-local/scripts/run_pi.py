@@ -28,9 +28,10 @@ Outputs (under --out-dir, default results/pi_<dataset>/):
   llm_cache.jsonl                   the restart cache (never commit it)
 """
 from __future__ import annotations
-import argparse, asyncio, time
+import argparse
+import asyncio
+import time
 
-import numpy as np
 import pandas as pd
 
 import _runner_common as rc
