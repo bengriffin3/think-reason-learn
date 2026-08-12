@@ -4,47 +4,85 @@ Run all four TRL reasoning-ML methods (PolicyInduction, RRF, GPTree, RRM) on two
 real benchmarks with a **free, local** LLM — no paid API keys — then compare them
 to a 5-model sklearn baseline and combine both families into an ensemble.
 
-> **Status: skeleton.** Sections marked `TODO(Stage N)` are filled in by later
-> stages of this workstream.
-
----
-
 ## What you'll build
 
 1. Four reasoning-ML models scored on **VCBench** (founder-success prediction,
    our anchor dataset) and **Movie** (award-nomination prediction, temporal
-   split — where reasoning methods beat traditional ML).
+   split).
 2. A traditional-ML baseline: LR, HistGradientBoosting, RandomForest-250,
    ExtraTrees-250, GaussianNB over `[text-length, MiniLM-L6-v2 embeddings,
    TF-IDF top-400]` features.
 3. A combined ensemble: `rank01(traditional_ensemble) + rank01(reasoning_ensemble)`.
 4. A time-vs-score chart showing what each extra hour of local compute buys you.
 
-## Hero chart
+The honest headline, up front: **neither family wins on its own.** Traditional
+ML beats the reasoning methods on VCBench; on Movie the reasoning ensemble edges
+ahead by +0.016 ROC-AUC — on n=727, inside sampling noise, so call it
+*competitive*, not a win. What holds on **both** datasets is that the combined
+ensemble beats both families — the two make different mistakes, and that
+diversity is worth more than either family's margin over the other.
 
-TODO(Stage 7): `figures/time_vs_score.png` — wall-clock cost vs. ROC-AUC for
-every method and ensemble, both datasets.
+## The hero chart
+
+![Wall-clock hours vs held-out ROC-AUC, one point per method and ensemble, Movie and VCBench](figures/time_vs_score.png)
+
+Regenerate it with `python scripts/make_hero_figure.py` — it reads only
+`precomputed/` (no LLM, no network) and is deterministic. The Movie panel's
+hours are **measured** (calibrated 2026-08-12 on an idle Apple-silicon Mac); the
+VCBench panel's are **projected** from the Movie-measured seconds-per-call ×
+each runner's VCBench call count, because VCBench was never timed. The
+traditional baseline makes no LLM calls and finishes in about 4 minutes — that
+near-zero x position is half the story. The other half: RRF is both the most
+expensive method (30,632 calls on Movie) and the best single scorer, GPTree and
+RRM are cheap and weak, and no single method — at any price — reaches the
+combined ensemble.
 
 ## Results
 
-TODO(Stage 3/7): results table. Two columns per dataset, per the project's
-benchmark-hygiene decisions:
+ROC-AUC / PR-AUC. VCBench public: n=4,500, base rate 9.0%. Movie test: n=727,
+base rate 20.8%.
 
-| Method | VCBench public-CV (reproducible in notebooks) | VCBench private target | Movie test (public CV) |
-|---|---|---|---|
-| PolicyInduction | TODO | TODO | TODO |
-| RRF | TODO | TODO | TODO |
-| GPTree | TODO | TODO | TODO |
-| RRM | TODO | TODO | TODO |
-| Reasoning ensemble | TODO | TODO | TODO |
-| Traditional best / ensemble | TODO | TODO | TODO |
-| **Combined** | TODO | TODO | TODO |
+| Method | VCBench public | VCBench private* | Movie test |
+|---|---:|---:|---:|
+| PolicyInduction | 0.6763 / 0.1831 | 0.6556 / 0.1740 | 0.6346 / 0.2761 |
+| RRF | 0.6604 / 0.1689 | 0.6681 / 0.2262 | 0.6406 / 0.3048 |
+| GPTree | 0.6161 / 0.1320 | 0.5268 / 0.1053 | 0.5728 / 0.2447 |
+| RRM | 0.6665 / 0.1725 | 0.6662 / 0.1638 | 0.5787 / 0.2465 |
+| Reasoning ensemble (rank-avg of 4) | 0.7188 / 0.2072 | 0.6850 / 0.2129 | 0.6515 / 0.3007 |
+| Traditional ensemble (rank-avg of 5) | 0.7382 / 0.2258 | 0.7420 / 0.2570* | 0.6354 / 0.2927 |
+| **Combined** | **0.7610 / 0.2546** | — | **0.6704 / 0.3166** |
 
-- *Public-CV* numbers are what the notebooks reproduce end-to-end.
-- *Private target* (VCBench only) is the held-out test the maintainers score
-  against — shown as the number to beat; the labels are never shipped.
-- Panel numbers are colleague-grade, not paper-grade: this example teaches the
-  methods, it is not a benchmarking paper.
+Every VCBench-public and Movie number is recomputed by the notebooks from the
+CSVs in `precomputed/` and asserted at 4 decimal places — what you reproduce is
+exactly this table, not a paraphrase of it.
+
+- **\*The VCBench private column is a maintainer reference.** The private
+  split's labels (and its traditional scores) are deliberately not shipped, so
+  nothing in this column can be recomputed from this repo. It is shown as the
+  held-out target the public numbers generalize to. No private combined number
+  exists — computing one needs the private prose, which is not on disk here.
+- **The private split hands the ensemble its one loss:** on private PR-AUC, RRF
+  alone (0.2262) beats the reasoning ensemble (0.2129). Rank-averaging a strong
+  member with three weaker ones can cost you precision at the top of the
+  ranking even while it buys ROC — worth internalizing before you ensemble
+  everything by reflex.
+- **Traditional per-model scores are run-dependent** (tree ensembles are not
+  bit-stable across sklearn versions or hardware; the ensemble drifts ~±0.005,
+  single models more). The ensemble rows above are the stable, asserted ones;
+  notebook 03 prints the per-model board live if you want a best-single —
+  expect its identity to move between runs.
+- Scores here are colleague-grade, not paper-grade: this example teaches the
+  methods; it is not a benchmarking paper. The VCBench paper's dedicated
+  hand-crafted-feature baselines score higher than this panel-style suite.
+
+## Start here: the notebooks
+
+| Notebook | Needs | What it does |
+|---|---|---|
+| `01_quickstart.ipynb` | **nothing** — no dataset, no network, no Ollama | The whole example in ~5 min from `precomputed/` |
+| `02_reasoning_methods.ipynb` | nothing (one optional live cell uses Ollama) | What each method's learned artifact *is* — policies, questions, tree, rules — and each one's score |
+| `03_traditional_baselines.ipynb` | nothing (one optional live cell fetches Movie) | The 5-model suite, and reasoning-vs-traditional on both datasets |
+| `04_ensembling.ipynb` | nothing | Rank-averaging, the combined ensemble, and the full table above |
 
 ## Prerequisites
 
@@ -56,6 +94,14 @@ benchmark-hygiene decisions:
   ```bash
   pip install -e ".[examples]"
   ```
+
+  The extra pins `scikit-learn==1.9.0` — the version the shipped traditional
+  scores were computed under. On other versions the traditional ensemble drifts
+  ~±0.005 (same class of nondeterminism as the local LLM itself); the notebook
+  assertions read the shipped CSVs, so they pass either way.
+
+Only the notebooks' optional live cells and the `scripts/run_*.py` full runs
+need Ollama; everything else works offline.
 
 ## Getting the datasets
 
@@ -71,71 +117,140 @@ Raw data is **not** committed to this repo; fetch it yourself:
   export VCBENCH_DATA=~/.trl-data/vcbench/vcbench_final_public.csv
   ```
 
-  The quickstart notebook (`01_quickstart.ipynb`) needs **none** of this — it
-  reads the score CSVs in `precomputed/` and nothing else. You only need the raw
-  data for the live-run notebooks (02 onward) and the `scripts/run_*.py` runs.
-- **Movie** — public HuggingFace dataset, fetched automatically:
+- **Movie** — public HuggingFace dataset
+  ([`Francis2003/Movie-O-Label`](https://huggingface.co/datasets/Francis2003/Movie-O-Label)),
+  fetched automatically by the scripts and notebook 03's live cell. Temporal
+  split: train = films before 2013 (n=1,461, base rate 18.0%), test = 2013
+  onward (n=727, base rate 20.8%), after dropping 12 duplicate ids.
 
-  ```python
-  from datasets import load_dataset
-  ds = load_dataset("Francis2003/Movie-O-Label")
-  ```
-
-  Temporal split: train = films before 2013, test = 2013 onward (~67/33,
-  base rate ~19%).
+In every shipped CSV the join column is **`id`** — it holds the founder UUID on
+VCBench and the IMDb tconst on Movie.
 
 ## Runtime expectations (read before running anything)
 
-All timings measured on an M2 Mac with Ollama serving `qwen2.5-coder:14b`
-serially — your hardware will vary:
+From `precomputed/timings.json`, measured 2026-08-12 on an idle Apple-silicon
+Mac (arm64, 18 cores) with Ollama serving `qwen2.5-coder:14b` — planning-grade
+estimates from a small calibration slice, not benchmarks. YMMV:
 
-- **Movie, all four methods: ~35 h wall-clock total.**
-- **VCBench, all four methods: ~70 h wall-clock total.**
-- The quickstart notebook (`01_quickstart.ipynb`) uses **precomputed scores**
-  and runs in ~5 minutes — start there.
-- Every long run is restartable: per-call responses are cached to disk
-  (GPTree checkpoints per tree node instead), so a killed run resumes where
-  it left off.
-- TODO(Stage 6): `scripts/calibrate_timings.py` measures throughput on your
-  machine and writes `precomputed/timings.json`.
+| Method | s/call (measured) | LLM calls, full Movie run | Projected full Movie run |
+|---|---:|---:|---:|
+| GPTree | 2.65 | 7,654 | **~5.6 h** |
+| RRM | 2.77 | 8,295 | **~6.4 h** |
+| PolicyInduction | 1.91 | 22,026 | **~11.7 h** |
+| RRF | 3.59 | 30,632 | **~30.5 h** |
+| Traditional (no LLM) | — | 0 | **~4 min** |
+
+The call counts are arithmetic from each runner's defaults and are
+machine-independent; the hours are `s_per_call × calls`. A full VCBench public
+run was never timed — projecting the same rates over its call counts gives
+roughly GPTree 20 h · PI 24 h · RRM 28 h · RRF 72 h (fit and score all 4,500
+rows; treat these as order-of-magnitude).
+
+- Start with notebook 01; it needs none of this.
+- Every long run is restart-safe: per-call responses are cached to a JSONL on
+  disk, so a killed run resumes where it left off. (RRM's fit samples at
+  temperature 1.0 and opts into caching those calls — see
+  `src/disk_cache.py` for why that is not the default.)
+- `scripts/calibrate_timings.py --dataset movie` measures throughput on *your*
+  machine and rewrites `precomputed/timings.json`; every runner's start-up
+  banner then quotes your own numbers. Its default slice is n=100 per method
+  (the committed file was measured at n=100 for PI/RRF/GPTree and n=10 for RRM,
+  merged — the file-level `n_calibration` field records the last run's slice).
+
+## Running the methods yourself
+
+```bash
+# one method, one dataset
+python scripts/run_pi.py --dataset movie
+
+# everything, sequentially, with preflight checks and caffeinate
+bash scripts/run_all.sh --dataset movie
+```
+
+Things to know before you burn a day of compute:
+
+- **A from-scratch run lands *near* the shipped numbers, not on them.** The
+  scripts refit against a local, sampling LLM; expect scores within a few
+  hundredths, further if you change `--fit-size` or regenerate questions. The
+  shipped `precomputed/` CSVs are the reference.
+- **`--smoke` first.** Every runner has a `--smoke` mode (couple of minutes,
+  own cache) that exercises the full pipeline on a dozen rows.
+- **PI needs positives in its fit set.** Policy induction samples balanced
+  10-row context batches, so it needs at least ~5 positive examples — on
+  VCBench's 9% base rate that means `--fit-size` below ~56 cannot induce
+  anything (the runner shrinks the batch and warns). GPTree has the analogous
+  degeneracy and refuses to score a one-node tree.
+- The runners write to `results/` (gitignored), never to `precomputed/`, and
+  refuse to start if `OPENAI_BASE_URL` points anywhere non-local — a
+  30,000-call run pointed at a paid API by accident is an expensive typo.
 
 ## Directory tour
 
 | Path | What it is |
 |---|---|
-| `notebooks/01_quickstart.ipynb` | ~5 min tour using precomputed scores (TODO Stage 4) |
-| `notebooks/02_reasoning_methods.ipynb` | PI / RRF / GPTree / RRM walkthrough (TODO Stage 5) |
-| `notebooks/03_traditional_baselines.ipynb` | 5-model sklearn suite (TODO Stage 5) |
-| `notebooks/04_ensembling.ipynb` | rank-average + combined ensemble (TODO Stage 5) |
-| `scripts/run_{pi,rrf,gptree,rrm}.py` | full local runs per method (TODO Stage 6) |
-| `scripts/run_traditional.py` | traditional baseline runner (TODO Stage 6) |
-| `scripts/run_all.sh` | everything, sequentially (TODO Stage 6) |
-| `scripts/calibrate_timings.py` | n=100 throughput calibration → `timings.json` (TODO Stage 6) |
-| `scripts/run_movie_*.sh`, `kickoff_movie_all.sh`, `check_movie_progress.sh` | maintainer scripts that produced the shipped Movie artifacts (reference machine only) |
-| `src/logprobs_llm_shim.py` | drop-in TRL LLM adapter: chat-completions + logprobs + per-call disk cache, works with Ollama via `OPENAI_BASE_URL` |
-| `precomputed/` | per-sample score CSVs from the reference runs (land in Stage 3) |
-| `models/` | trained model bundles (land in Stage 3) |
-| `figures/` | time-vs-score chart (lands in Stage 7) |
+| `notebooks/01_quickstart.ipynb` … `04_ensembling.ipynb` | The guided tour — see table above |
+| `scripts/run_{pi,rrf,gptree,rrm}.py` | Full local runs, one per method |
+| `scripts/run_traditional.py` | The 5-model sklearn baseline (no LLM) |
+| `scripts/_runner_common.py` | Shared runner plumbing: dataset loading, splits, the answer-vector→score combiner, call estimates |
+| `scripts/run_all.sh` | Everything, sequentially, with preflight checks |
+| `scripts/calibrate_timings.py` | Throughput calibration on your machine → `precomputed/timings.json` |
+| `scripts/make_hero_figure.py` | Regenerates `figures/time_vs_score.{png,svg}` from `precomputed/` |
+| `scripts/run_movie_*.sh`, `kickoff_movie_all.sh`, `check_movie_progress.sh` | Maintainer scripts that produced the shipped Movie artifacts (reference machine only) |
+| `src/llm.py` | The LLM factory every runner and notebook goes through — `get_local_llm()` |
+| `src/disk_cache.py` | Restart-safe per-call JSONL cache, temperature-aware |
+| `src/logprobs_llm_shim.py` | Pre-PR-#81 adapter: chat-completions + logprobs against Ollama |
+| `precomputed/` | Reference score CSVs (the results table) + `timings.json` |
+| `models/` | The trained, PII-vetted model bundles the notebooks open |
+| `figures/` | The hero chart, regenerable from `scripts/make_hero_figure.py` |
+
+Two deliberate asymmetries in `models/`, so they don't read as oversights:
+VCBench's RRM bundle ships with its raw rules emptied (they can quote training
+prose; predict uses only the compiled policy + calibrator), while Movie's keeps
+all 346 rules — they are mined aggregates over public plot summaries and the
+most legible teaching artifact in the example. And held-out splits
+(`vcbench_private_*`, `movie_test_*`) ship scores without labels; Movie test
+labels come from `movie_test_traditional_scores.csv`, the one shipped file that
+carries them.
 
 ## Why the shim?
 
 TRL's stock OpenAI provider targets the `/v1/responses` endpoint, which
 Ollama's OpenAI-compat layer doesn't serve, and it doesn't return token
-logprobs (RRM needs them). `src/logprobs_llm_shim.py` is a small drop-in
-`LLM` replacement using `chat.completions` with `logprobs=True` and a
-JSONL per-call disk cache. Point it at Ollama with:
+logprobs (RRM needs them). `src/logprobs_llm_shim.py` is a small drop-in `LLM`
+replacement using `chat.completions` with `logprobs=True`.
+
+You never construct it directly: every runner and notebook builds its LLM
+through **`src/llm.py`'s `get_local_llm()`**, which prefers the library's
+`OpenAILLM` when it can talk to Ollama and falls back to the shim, then wraps
+either in the disk cache. Library PR
+[#81](https://github.com/Vela-Research/think-reason-learn/pull/81) adds
+chat-completions + logprobs support to `OpenAILLM` itself; once it merges, the
+shim and the fallback branch get deleted and the factory keeps working
+unchanged. The example works either way. Ollama's default endpoint is assumed;
+override with:
 
 ```bash
-export OPENAI_BASE_URL=http://localhost:11434/v1
-export OPENAI_API_KEY=ollama
+export OPENAI_BASE_URL=http://localhost:11434/v1   # the default
 ```
+
+## Reading the score files
+
+- Reasoning scores are **rankings, not calibrated probabilities**. In
+  particular RRM's Movie scores are the raw fused-combiner output and land
+  around **−10.9 to −10.6** — that is what ships and what a rerun produces;
+  only the ordering is used. (VCBench RRM's happen to land in 0.08–0.32.)
+- PI and RRF ship one score per row, produced by collapsing their per-policy /
+  per-question answer vectors with an out-of-fold logistic combiner
+  (`_runner_common.py` has the exact operator).
 
 ## Cloud reference (optional)
 
-The same methods run against cloud LLMs (e.g. Gemini 2.5 Flash) with different
-trade-offs — faster wall-clock, per-token cost, API keys required. This example
-is local-first; cloud numbers appear in the results table as reference only.
-TODO(Stage 5): short appendix.
+The same VCBench bundles run against a cloud LLM (Gemini 2.5 Flash, calibrated,
+private split) score: PI 0.669/0.204 · RRF 0.726/0.254 · GPTree 0.587/0.164 ·
+RRM 0.602/0.137 · reasoning ensemble 0.700/0.218. Faster wall-clock, per-token
+cost, API keys required — reference only; nothing in this example needs a cloud
+key, and the cloud and local runs are not directly comparable (different
+models, prompts frozen at different times).
 
 ## Model pinning
 
