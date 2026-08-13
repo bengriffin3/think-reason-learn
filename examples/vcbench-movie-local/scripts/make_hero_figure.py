@@ -1,10 +1,12 @@
 """Draw the example's hero figure: wall-clock cost vs held-out ROC-AUC.
 
-One point per reasoning method plus the traditional ensemble, the reasoning
-ensemble and the combined ensemble, on both datasets. Reads
-``precomputed/*_scores.csv`` and ``precomputed/timings.json`` and nothing else —
-no LLM, no network, no raw dataset — so anyone with a checkout can regenerate
-``figures/time_vs_score.{png,svg}`` exactly.
+One point per reasoning method plus the reasoning ensemble and the combined
+ensemble, on both datasets; the traditional ensemble is the grey horizontal
+baseline each panel measures everything against (it makes no LLM calls and
+finishes in ~4 minutes, so it has no meaningful position on an hours axis).
+Reads ``precomputed/*_scores.csv`` and ``precomputed/timings.json`` and nothing
+else — no LLM, no network, no raw dataset — so anyone with a checkout can
+regenerate ``figures/time_vs_score.{png,svg}`` exactly.
 
 The two panels are not the same kind of number and say so in their titles:
 
@@ -17,8 +19,7 @@ The two panels are not the same kind of number and say so in their titles:
 
 Ensemble x-values are the sum of their members' runtimes: the reasoning
 ensemble needs all four method runs, the combined ensemble those plus the
-traditional baseline. The traditional baseline makes no LLM calls and finishes
-in minutes on either dataset; both panels draw it at ~4 minutes.
+traditional baseline's minutes.
 
 Every y-value is recomputed here from the score CSVs and asserted against the
 reference run at 4 dp, so the figure cannot silently drift from the README
@@ -45,9 +46,11 @@ PRECOMPUTED = EXAMPLE_ROOT / "precomputed"
 FIGURES = EXAMPLE_ROOT / "figures"
 
 # Notebook palette (01/04): colour is emphasis, not identity — identity is
-# carried by the direct labels, the combined ensemble by the dark blue.
+# carried by the direct labels, the combined ensemble by the dark blue, the
+# traditional baseline by the dark grey rule.
 PEER, HIGHLIGHT = "#86b6ef", "#2a78d6"
 GRID, AXIS, TICK, VALUE, TITLE = "#e1e0d9", "#c3c2b7", "#898781", "#52514e", "#0b0b0b"
+BASELINE = "#52514e"
 
 METHODS = {"PI": "pi", "RRF": "rrf", "GPTree": "gptree", "RRM": "rrm"}
 TRADITIONAL_S = 250.0  # embedding + sklearn, no LLM; minutes on either dataset
@@ -104,82 +107,94 @@ def method_hours(timings: dict) -> tuple[dict[str, float], dict[str, float]]:
 
 
 def panel_points(rocs: dict[str, float], hours: dict[str, float]) -> dict[str, tuple[float, float]]:
+    """The scatter points: four methods + the two LLM-cost ensembles."""
     reasoning_h = sum(hours.values())
-    trad_h = TRADITIONAL_S / 3600
     points = {m: (hours[m], rocs[m]) for m in METHODS}
-    points["Traditional ens"] = (trad_h, rocs["Traditional ens"])
     points["Reasoning ens"] = (reasoning_h, rocs["Reasoning ens"])
-    points["Combined"] = (reasoning_h + trad_h, rocs["Combined"])
+    points["Combined"] = (reasoning_h + TRADITIONAL_S / 3600, rocs["Combined"])
     return points
 
 
 # Per-point label placement: (dx, dy) in axis-fraction offsets, anchor.
 LABEL_OFFSETS = {
     "Movie test": {
-        "Traditional ens": (0.0, 0.05, "left"),
-        "GPTree": (0.0, -0.055, "center"),
-        "RRM": (0.02, 0.03, "left"),
-        "PI": (0.0, -0.055, "center"),
-        "RRF": (0.0, 0.035, "center"),
-        "Reasoning ens": (-0.025, -0.005, "right"),
-        "Combined": (0.0, 0.05, "center"),
+        "GPTree": (0.0, -0.06, "center"),
+        "RRM": (0.022, 0.032, "left"),
+        "PI": (0.0, -0.06, "center"),
+        "RRF": (0.0, 0.045, "center"),
+        "Reasoning ens": (-0.028, -0.005, "right"),
+        "Combined": (0.0, 0.055, "center"),
     },
     "VCBench public": {
-        "Traditional ens": (0.015, 0.035, "left"),
-        "GPTree": (0.0, -0.055, "center"),
-        "RRM": (0.02, -0.05, "left"),
-        "PI": (0.0, 0.035, "center"),
-        "RRF": (0.0, 0.035, "center"),
-        "Reasoning ens": (-0.02, 0.03, "right"),
-        "Combined": (-0.02, 0.02, "right"),
+        "GPTree": (0.0, -0.06, "center"),
+        "RRM": (0.022, -0.05, "left"),
+        "PI": (0.0, 0.045, "center"),
+        "RRF": (0.0, 0.045, "center"),
+        "Reasoning ens": (-0.005, -0.06, "center"),
+        "Combined": (0.0, 0.055, "center"),
     },
 }
 
 
 def draw_panel(ax: Axes, name: str, points: dict[str, tuple[float, float]],
-               title: str, xlabel: str) -> None:
+               trad_roc: float, title: str, xlabel: str) -> None:
+    xmax = ax.get_xlim()[1]
+    xspan = xmax - ax.get_xlim()[0]
+    yspan = ax.get_ylim()[1] - ax.get_ylim()[0]
+
+    # The two reference levels: chance, and the no-LLM traditional ensemble.
+    ax.axhline(0.5, color=TICK, linewidth=0.9, linestyle=(0, (4, 3)))
+    ax.text(xmax * 0.99, 0.5 + 0.008 * yspan, "chance", ha="right", va="bottom",
+            fontsize=8, color=TICK)
+    ax.axhline(trad_roc, color=BASELINE, linewidth=2.2, zorder=2,
+               solid_capstyle="butt")
+    ax.text(xmax * 0.99, trad_roc - 0.014 * yspan,
+            f"Traditional ensemble  {trad_roc:.4f}  (no LLM, ~4 min)",
+            ha="right", va="top", fontsize=8.5, color=BASELINE)
+
     for label, (x, y) in points.items():
         emphasised = label == "Combined"
-        ax.scatter(x, y, s=130 if emphasised else 80,
-                   color=HIGHLIGHT if emphasised else PEER, zorder=3)
+        ax.scatter(x, y, s=150 if emphasised else 95,
+                   color=HIGHLIGHT if emphasised else PEER,
+                   edgecolors="white", linewidths=1.4, zorder=3)
         dx, dy, ha = LABEL_OFFSETS[name][label]
-        xspan = ax.get_xlim()[1] - ax.get_xlim()[0]
-        yspan = ax.get_ylim()[1] - ax.get_ylim()[0]
         ax.annotate(f"{label}\n{y:.4f}", (x, y), (x + dx * xspan, y + dy * yspan),
-                    ha=ha, va="center", fontsize=8.5, color=VALUE, linespacing=1.25,
+                    ha=ha, va="center", fontsize=8.5, color=VALUE, linespacing=1.3,
                     fontweight="bold" if emphasised else "normal")
-    ax.axhline(0.5, color=TICK, linewidth=1, linestyle="--")
-    ax.text(ax.get_xlim()[1] * 0.99, 0.503, "chance", ha="right", fontsize=8, color=TICK)
+
     ax.set_title(title, fontsize=11, color=TITLE, pad=10)
     ax.set_xlabel(xlabel, fontsize=9.5, color=VALUE)
-    ax.grid(color=GRID, linewidth=0.8)
+    ax.grid(axis="y", color=GRID, linewidth=0.8)
     ax.set_axisbelow(True)
     for spine in ("top", "right"):
         ax.spines[spine].set_visible(False)
     for spine in ("left", "bottom"):
         ax.spines[spine].set_color(AXIS)
-    ax.tick_params(colors=TICK, labelsize=9)
+        ax.spines[spine].set_linewidth(0.9)
+    ax.tick_params(colors=TICK, labelsize=9, length=3, width=0.8)
 
 
 def main() -> None:
     plt.rcParams["svg.hashsalt"] = "trl-example"  # deterministic SVG output
     timings = json.loads((PRECOMPUTED / "timings.json").read_text())
     movie_h, vcbench_h = method_hours(timings)
+    movie_rocs, vcbench_rocs = roc_points("movie_test"), roc_points("vcbench_public")
     panels = {
-        "Movie test": (panel_points(roc_points("movie_test"), movie_h),
+        "Movie test": (panel_points(movie_rocs, movie_h), movie_rocs["Traditional ens"],
                        "Movie test (n=727) — measured timings",
                        "wall-clock hours, measured"),
-        "VCBench public": (panel_points(roc_points("vcbench_public"), vcbench_h),
+        "VCBench public": (panel_points(vcbench_rocs, vcbench_h), vcbench_rocs["Traditional ens"],
                            "VCBench public (n=4,500) — projected timings",
                            "wall-clock hours, projected from measured s/call"),
     }
 
     fig, axes = plt.subplots(1, 2, figsize=(11.5, 5.2), sharey=True)
-    for ax, (name, (points, title, xlabel)) in zip(axes, panels.items()):
+    for ax, (name, (points, trad_roc, title, xlabel)) in zip(axes, panels.items()):
         xmax = max(x for x, _ in points.values())
-        ax.set_xlim(-0.04 * xmax, 1.12 * xmax)
+        ax.set_xlim(0.0, 1.10 * xmax)
         ax.set_ylim(0.47, 0.80)
-        draw_panel(ax, name, points, title, xlabel)
+        ax.margins(x=0)
+        draw_panel(ax, name, points, trad_roc, title, xlabel)
     axes[0].set_ylabel("held-out ROC-AUC", fontsize=9.5, color=VALUE)
 
     fig.suptitle("What an extra hour of local compute buys", fontsize=13.5,
@@ -187,9 +202,8 @@ def main() -> None:
     caption = (
         f"qwen2.5-coder:14b via Ollama on {timings['machine']} · calibrated "
         "2026-08-12 on an idle box (planning-grade estimates, YMMV) · ensemble "
-        "x = sum of member runtimes · the traditional baseline makes no LLM "
-        "calls and is drawn at its ~4-minute runtime · VCBench hours were never "
-        "measured: they are Movie-measured s/call × VCBench call counts"
+        "x = sum of member runtimes · VCBench hours were never measured: they "
+        "are Movie-measured s/call × VCBench call counts"
     )
     fig.text(0.5, 0.012, caption, ha="center", fontsize=7.5, color=TICK, wrap=True)
     fig.tight_layout(rect=(0, 0.05, 1, 0.97))

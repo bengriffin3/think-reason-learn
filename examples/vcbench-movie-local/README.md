@@ -24,18 +24,20 @@ diversity is worth more than either family's margin over the other.
 
 ## The hero chart
 
-![Wall-clock hours vs held-out ROC-AUC, one point per method and ensemble, Movie and VCBench](figures/time_vs_score.png)
+![Wall-clock hours vs held-out ROC-AUC: one point per reasoning method and ensemble, with the traditional ensemble as a grey baseline, Movie and VCBench](figures/time_vs_score.png)
 
 Regenerate it with `python scripts/make_hero_figure.py` — it reads only
 `precomputed/` (no LLM, no network) and is deterministic. The Movie panel's
 hours are **measured** (calibrated 2026-08-12 on an idle Apple-silicon Mac); the
 VCBench panel's are **projected** from the Movie-measured seconds-per-call ×
-each runner's VCBench call count, because VCBench was never timed. The
-traditional baseline makes no LLM calls and finishes in about 4 minutes — that
-near-zero x position is half the story. The other half: RRF is both the most
-expensive method (30,632 calls on Movie) and the best single scorer, GPTree and
-RRM are cheap and weak, and no single method — at any price — reaches the
-combined ensemble.
+each runner's VCBench call count, because VCBench was never timed. The grey
+rule is the traditional ensemble — no LLM, ~4 minutes, so it has no meaningful
+position on an hours axis; it is the level everything else has to justify its
+hours against. That framing is half the story. The other half: RRF is both the
+most expensive method (30,632 calls on Movie) and the best single scorer — on
+Movie, 30 hours of it lands you back on the free baseline — GPTree and RRM are
+cheap and weak, and no single method, at any price, reaches the combined
+ensemble.
 
 ## Results
 
