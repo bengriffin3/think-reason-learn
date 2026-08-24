@@ -1,12 +1,21 @@
-"""Draw the example's hero figure: wall-clock cost vs held-out ROC-AUC.
+"""Draw the example's hero figures: wall-clock cost vs held-out ROC-AUC.
 
-One point per reasoning method plus the reasoning ensemble and the combined
-ensemble, on both datasets; the traditional ensemble is the grey horizontal
-baseline each panel measures everything against (it makes no LLM calls and
-finishes in ~4 minutes, so it has no meaningful position on an hours axis).
-Reads ``precomputed/*_scores.csv`` and ``precomputed/timings.json`` and nothing
-else — no LLM, no network, no raw dataset — so anyone with a checkout can
-regenerate ``figures/time_vs_score.{png,svg}`` exactly.
+Two figures, same layout, different traditional comparison:
+
+* ``figures/time_vs_score.{png,svg}`` — the README hero. One point per
+  reasoning method plus the reasoning ensemble and the combined ensemble;
+  horizontal lines mark the **interpretable** traditional models (logistic
+  regression, Gaussian NB, a depth-limited decision tree, k-NN). The
+  black-box tree ensembles are deliberately absent: beating a model nobody
+  can inspect is a different, less interesting comparison, and the caption
+  says where they land.
+* ``figures/time_vs_score_all_traditional.{png,svg}`` — the same panels
+  against **all five** models of the ``run_traditional.py`` suite, black
+  boxes included, for the reader who wants the full spread.
+
+Reads ``precomputed/*_scores.csv`` and ``precomputed/timings.json`` and
+nothing else — no LLM, no network, no raw dataset — so anyone with a checkout
+can regenerate both figures exactly.
 
 The two panels are not the same kind of number and say so in their titles:
 
@@ -14,16 +23,20 @@ The two panels are not the same kind of number and say so in their titles:
   ``timings.json`` (idle-box calibration, 2026-08-12).
 * **VCBench** was never timed. Its x-values multiply the Movie-measured
   ``s_per_call`` by the call count a full VCBench public run makes
-  (``_runner_common.estimate_calls`` at each runner's defaults) — projections,
-  labelled as such.
+  (``_runner_common.estimate_calls`` at each runner's defaults) —
+  projections, labelled as such.
 
 Ensemble x-values are the sum of their members' runtimes: the reasoning
 ensemble needs all four method runs, the combined ensemble those plus the
 traditional baseline's minutes.
 
 Every y-value is recomputed here from the score CSVs and asserted against the
-reference run at 4 dp, so the figure cannot silently drift from the README
-table or the notebooks.
+reference run at 4 dp, so the figures cannot silently drift from the README
+table or the notebooks. The traditional lines come from
+``*_traditional_permodel_scores.csv`` (see ``make_permodel_scores.py``): a
+per-model refit under the pinned scikit-learn 1.9.0 whose rank-average
+ensemble lands within ~0.005 of the shipped ensemble CSV — that drift is
+asserted here too and documented in the README.
 """
 from __future__ import annotations
 
@@ -46,14 +59,38 @@ PRECOMPUTED = EXAMPLE_ROOT / "precomputed"
 FIGURES = EXAMPLE_ROOT / "figures"
 
 # Notebook palette (01/04): colour is emphasis, not identity — identity is
-# carried by the direct labels, the combined ensemble by the dark blue, the
-# traditional baseline by the dark grey rule.
+# carried by the direct labels and the legend, the combined ensemble by the
+# dark blue.
 PEER, HIGHLIGHT = "#86b6ef", "#2a78d6"
 GRID, AXIS, TICK, VALUE, TITLE = "#e1e0d9", "#c3c2b7", "#898781", "#52514e", "#0b0b0b"
-BASELINE = "#52514e"
 
 METHODS = {"PI": "pi", "RRF": "rrf", "GPTree": "gptree", "RRM": "rrm"}
 TRADITIONAL_S = 250.0  # embedding + sklearn, no LLM; minutes on either dataset
+
+# Traditional models: the run_traditional.py suite (lr/hgb/rf/et/gnb) plus the
+# two extra interpretable models make_permodel_scores.py fits (dt/knn). One
+# muted colour per model, consistent across both figures; the blue scatter
+# stays the visual hero.
+TRAD_NAMES = {
+    "lr": "Logistic reg.",
+    "gnb": "Gaussian NB",
+    "dt": "Decision tree (d≤5)",
+    "knn": "k-NN (k=50)",
+    "rf": "Random forest",
+    "et": "Extra-trees",
+    "hgb": "HistGB",
+}
+TRAD_COLORS = {
+    "lr": "#b5764f",   # terracotta
+    "gnb": "#7f9c6d",  # sage
+    "dt": "#9c7fa3",   # mauve
+    "knn": "#52514e",  # charcoal
+    "rf": "#a39352",   # ochre
+    "et": "#6b9c9a",   # muted teal
+    "hgb": "#8c8c8c",  # mid grey
+}
+SUITE = ["lr", "hgb", "rf", "et", "gnb"]
+INTERPRETABLE = ["lr", "gnb", "dt", "knn"]
 
 # The reference run's ROC-AUCs (the README table). Any recomputed value that
 # does not match at 4 dp aborts the figure rather than drawing it.
@@ -63,6 +100,16 @@ REFERENCE_ROC = {
     "movie_test": {"PI": 0.6346, "RRF": 0.6406, "GPTree": 0.5728, "RRM": 0.5787,
                    "Reasoning ens": 0.6515, "Traditional ens": 0.6354, "Combined": 0.6704},
 }
+# Per-model reference for the *_traditional_permodel_scores.csv refit, plus
+# what that refit's own 5-model rank-average comes to — within library drift
+# of the shipped ensemble above (0.7382 / 0.6354), never quoted as it.
+REFERENCE_TRAD = {
+    "vcbench_public": {"lr": 0.6878, "hgb": 0.7110, "rf": 0.7262, "et": 0.7321,
+                       "gnb": 0.5932, "dt": 0.6170, "knn": 0.6972},
+    "movie_test": {"lr": 0.5907, "hgb": 0.5969, "rf": 0.6409, "et": 0.6041,
+                   "gnb": 0.6086, "dt": 0.4888, "knn": 0.6369},
+}
+REFERENCE_TRAD_ENS = {"vcbench_public": 0.7437, "movie_test": 0.6365}
 
 # Call counts for a full VCBench public run (fit and score all 4,500) at the
 # runners' VCBench defaults: PI 10 policies, RRF's 16-question shortlist,
@@ -92,6 +139,20 @@ def roc_points(prefix: str) -> dict[str, float]:
     rocs = {name: round(float(roc_auc_score(y, s)), 4) for name, s in series.items()}
     for name, expected in REFERENCE_ROC[prefix].items():
         assert rocs[name] == expected, (prefix, name, rocs[name], expected)
+    return rocs
+
+
+def trad_rocs(prefix: str) -> dict[str, float]:
+    """Per-model traditional ROC-AUCs from the permodel refit CSV, asserted."""
+    permodel = load(prefix, "traditional_permodel")
+    y = permodel["label"]
+    rocs = {col: round(float(roc_auc_score(y, permodel[col])), 4)
+            for col in TRAD_NAMES}
+    for col, expected in REFERENCE_TRAD[prefix].items():
+        assert rocs[col] == expected, (prefix, col, rocs[col], expected)
+    refit_ens = cast(pd.Series, permodel[SUITE].rank(pct=True).mean(axis=1))
+    refit_roc = round(float(roc_auc_score(y, refit_ens)), 4)
+    assert refit_roc == REFERENCE_TRAD_ENS[prefix], (prefix, refit_roc)
     return rocs
 
 
@@ -137,20 +198,36 @@ LABEL_OFFSETS = {
 
 
 def draw_panel(ax: Axes, name: str, points: dict[str, tuple[float, float]],
-               trad_roc: float, title: str, xlabel: str) -> None:
+               trad: dict[str, float], title: str, xlabel: str) -> None:
     xmax = ax.get_xlim()[1]
     xspan = xmax - ax.get_xlim()[0]
     yspan = ax.get_ylim()[1] - ax.get_ylim()[0]
 
-    # The two reference levels: chance, and the no-LLM traditional ensemble.
     ax.axhline(0.5, color=TICK, linewidth=0.9, linestyle=(0, (4, 3)))
     ax.text(xmax * 0.99, 0.5 + 0.008 * yspan, "chance", ha="right", va="bottom",
             fontsize=8, color=TICK)
-    ax.axhline(trad_roc, color=BASELINE, linewidth=2.2, zorder=2,
-               solid_capstyle="butt")
-    ax.text(xmax * 0.99, trad_roc - 0.014 * yspan,
-            f"Traditional ensemble  {trad_roc:.4f}  (no LLM, ~4 min)",
-            ha="right", va="top", fontsize=8.5, color=BASELINE)
+
+    # One line per traditional model, the best of the drawn set slightly
+    # heavier; the legend block sits in the panels' dead top-left corner,
+    # descending score = the vertical order of the lines themselves.
+    best = max(trad, key=lambda c: trad[c])
+    for col, roc in trad.items():
+        ax.axhline(roc, color=TRAD_COLORS[col],
+                   linewidth=2.2 if col == best else 1.4, zorder=2,
+                   solid_capstyle="butt")
+    for i, (col, roc) in enumerate(sorted(trad.items(), key=lambda kv: -kv[1])):
+        emph = col == best
+        y_row = 0.975 - i * 0.055
+        legend_bbox = dict(facecolor="white", alpha=0.85, pad=1.5,
+                           edgecolor="none")
+        ax.text(0.025, y_row, "—", transform=ax.transAxes, ha="left", va="top",
+                fontsize=8, color=TRAD_COLORS[col], fontweight="bold",
+                bbox=legend_bbox, zorder=4)
+        ax.text(0.058, y_row, f"{TRAD_NAMES[col]}  {roc:.4f}",
+                transform=ax.transAxes, ha="left", va="top", fontsize=8,
+                color=VALUE if emph else TICK,
+                fontweight="bold" if emph else "normal",
+                bbox=legend_bbox, zorder=4)
 
     for label, (x, y) in points.items():
         emphasised = label == "Combined"
@@ -160,7 +237,9 @@ def draw_panel(ax: Axes, name: str, points: dict[str, tuple[float, float]],
         dx, dy, ha = LABEL_OFFSETS[name][label]
         ax.annotate(f"{label}\n{y:.4f}", (x, y), (x + dx * xspan, y + dy * yspan),
                     ha=ha, va="center", fontsize=8.5, color=VALUE, linespacing=1.3,
-                    fontweight="bold" if emphasised else "normal")
+                    fontweight="bold" if emphasised else "normal",
+                    bbox=dict(facecolor="white", alpha=0.75, pad=1.0,
+                              edgecolor="none"), zorder=4)
 
     ax.set_title(title, fontsize=11, color=TITLE, pad=10)
     ax.set_xlabel(xlabel, fontsize=9.5, color=VALUE)
@@ -174,46 +253,76 @@ def draw_panel(ax: Axes, name: str, points: dict[str, tuple[float, float]],
     ax.tick_params(colors=TICK, labelsize=9, length=3, width=0.8)
 
 
+def render(panels: dict, trad: dict[str, dict[str, float]], subset: list[str],
+           suptitle: str, timing_line: str, trad_line: str, stem: str) -> None:
+    fig, axes = plt.subplots(1, 2, figsize=(11.5, 5.4), sharey=True)
+    for ax, (name, (points, title, xlabel)) in zip(axes, panels.items()):
+        xmax = max(x for x, _ in points.values())
+        ax.set_xlim(0.0, 1.10 * xmax)
+        ax.set_ylim(0.47, 0.80)
+        ax.margins(x=0)
+        draw_panel(ax, name, points, {c: trad[name][c] for c in subset},
+                   title, xlabel)
+    axes[0].set_ylabel("held-out ROC-AUC", fontsize=9.5, color=VALUE)
+
+    fig.suptitle(suptitle, fontsize=13.5, color=TITLE, y=0.99)
+    fig.text(0.5, 0.012, timing_line + "\n" + trad_line, ha="center",
+             fontsize=7.5, color=TICK, wrap=True, linespacing=1.5)
+    fig.tight_layout(rect=(0, 0.105, 1, 0.97))
+
+    FIGURES.mkdir(exist_ok=True)
+    for suffix in ("png", "svg"):
+        out = FIGURES / f"{stem}.{suffix}"
+        # Date: None keeps the SVG byte-identical between runs.
+        fig.savefig(out, dpi=200, metadata=None if suffix == "png" else {"Date": None})
+        print(f"wrote {out.relative_to(EXAMPLE_ROOT)}")
+    plt.close(fig)
+
+
 def main() -> None:
     plt.rcParams["svg.hashsalt"] = "trl-example"  # deterministic SVG output
     timings = json.loads((PRECOMPUTED / "timings.json").read_text())
     movie_h, vcbench_h = method_hours(timings)
     movie_rocs, vcbench_rocs = roc_points("movie_test"), roc_points("vcbench_public")
+    trad = {"Movie test": trad_rocs("movie_test"),
+            "VCBench public": trad_rocs("vcbench_public")}
     panels = {
-        "Movie test": (panel_points(movie_rocs, movie_h), movie_rocs["Traditional ens"],
+        "Movie test": (panel_points(movie_rocs, movie_h),
                        "Movie test (n=727) — measured timings",
                        "wall-clock hours, measured"),
-        "VCBench public": (panel_points(vcbench_rocs, vcbench_h), vcbench_rocs["Traditional ens"],
+        "VCBench public": (panel_points(vcbench_rocs, vcbench_h),
                            "VCBench public (n=4,500) — projected timings",
                            "wall-clock hours, projected from measured s/call"),
     }
 
-    fig, axes = plt.subplots(1, 2, figsize=(11.5, 5.2), sharey=True)
-    for ax, (name, (points, trad_roc, title, xlabel)) in zip(axes, panels.items()):
-        xmax = max(x for x, _ in points.values())
-        ax.set_xlim(0.0, 1.10 * xmax)
-        ax.set_ylim(0.47, 0.80)
-        ax.margins(x=0)
-        draw_panel(ax, name, points, trad_roc, title, xlabel)
-    axes[0].set_ylabel("held-out ROC-AUC", fontsize=9.5, color=VALUE)
-
-    fig.suptitle("What an extra hour of local compute buys", fontsize=13.5,
-                 color=TITLE, y=0.99)
-    caption = (
+    timing_line = (
         f"qwen2.5-coder:14b via Ollama on {timings['machine']} · calibrated "
         "2026-08-12 on an idle box (planning-grade estimates, YMMV) · ensemble "
         "x = sum of member runtimes · VCBench hours were never measured: they "
         "are Movie-measured s/call × VCBench call counts"
     )
-    fig.text(0.5, 0.012, caption, ha="center", fontsize=7.5, color=TICK, wrap=True)
-    fig.tight_layout(rect=(0, 0.05, 1, 0.97))
-
-    FIGURES.mkdir(exist_ok=True)
-    for suffix in ("png", "svg"):
-        out = FIGURES / f"time_vs_score.{suffix}"
-        # Date: None keeps the SVG byte-identical between runs.
-        fig.savefig(out, dpi=200, metadata=None if suffix == "png" else {"Date": None})
-        print(f"wrote {out.relative_to(EXAMPLE_ROOT)}")
+    permodel_note = (
+        "coloured lines: per-model traditional refits under the pinned "
+        "scikit-learn 1.9.0 (precomputed/*_permodel_scores.csv; see README "
+        "for the small drift vs the shipped ensemble CSV)"
+    )
+    render(panels, trad, INTERPRETABLE,
+           "What an extra hour of local compute buys — vs interpretable "
+           "traditional models",
+           timing_line,
+           permodel_note + " · black-box tree ensembles score higher "
+           f"(extra-trees {trad['VCBench public']['et']:.4f} VCBench · random "
+           f"forest {trad['Movie test']['rf']:.4f} Movie) but beating an "
+           "uninspectable model is a different comparison — see "
+           "time_vs_score_all_traditional",
+           "time_vs_score")
+    render(panels, trad, SUITE,
+           "What an extra hour of local compute buys — vs the full "
+           "traditional suite",
+           timing_line,
+           permodel_note + " · these five are run_traditional.py's suite, "
+           "black boxes included",
+           "time_vs_score_all_traditional")
 
 
 if __name__ == "__main__":

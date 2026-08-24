@@ -24,20 +24,44 @@ diversity is worth more than either family's margin over the other.
 
 ## The hero chart
 
-![Wall-clock hours vs held-out ROC-AUC: one point per reasoning method and ensemble, with the traditional ensemble as a grey baseline, Movie and VCBench](figures/time_vs_score.png)
+![Wall-clock hours vs held-out ROC-AUC: one point per reasoning method and ensemble, with one coloured line per interpretable traditional model, Movie and VCBench](figures/time_vs_score.png)
 
 Regenerate it with `python scripts/make_hero_figure.py` — it reads only
 `precomputed/` (no LLM, no network) and is deterministic. The Movie panel's
 hours are **measured** (calibrated 2026-08-12 on an idle Apple-silicon Mac); the
 VCBench panel's are **projected** from the Movie-measured seconds-per-call ×
-each runner's VCBench call count, because VCBench was never timed. The grey
-rule is the traditional ensemble — no LLM, ~4 minutes, so it has no meaningful
-position on an hours axis; it is the level everything else has to justify its
-hours against. That framing is half the story. The other half: RRF is both the
-most expensive method (30,632 calls on Movie) and the best single scorer — on
-Movie, 30 hours of it lands you back on the free baseline — GPTree and RRM are
-cheap and weak, and no single method, at any price, reaches the combined
-ensemble.
+each runner's VCBench call count, because VCBench was never timed.
+
+The coloured lines are the **interpretable** traditional models — logistic
+regression, Gaussian NB, a depth-5 decision tree, k-NN. They make no LLM calls
+and finish in minutes, so they have no meaningful position on an hours axis.
+That's the fair fight for this library: every TRL method produces an artifact a
+person can read (policies, question shortlists, an LLM-guided tree, mined
+rules), so the comparison that matters is against traditional models that are
+also inspectable — and on both datasets the reasoning ensemble clears every one
+of them (0.6515 vs k-NN's 0.6369 on Movie, 0.7188 vs 0.6972 on VCBench), with
+the combined ensemble clearing everything on the chart. The depth-5 decision
+tree is its own lesson: 0.4888 on Movie — below chance — because 785 embedding
+features are unsplittable without help, while GPTree, the same structure with
+an LLM choosing the questions, doesn't collapse.
+
+Two honest footnotes, both printed on the figure. The black-box tree ensembles
+score higher than anything interpretable (random forest 0.6409 on Movie,
+extra-trees 0.7321 on VCBench) — beating an uninspectable model is a different
+comparison, and `figures/time_vs_score_all_traditional.png` shows the full
+5-model suite for the reader who wants it. And on Movie the best single
+reasoning methods only tie k-NN — RRF spends 30,632 calls to land at 0.6406 vs
+free k-NN's 0.6369 — so it's the ensemble, not any one method, that clears the
+interpretable field.
+
+The traditional lines come from
+`precomputed/*_traditional_permodel_scores.csv`: a per-model refit by
+`scripts/make_permodel_scores.py` under the pinned scikit-learn 1.9.0, using
+`run_traditional.py`'s exact features, splits and seed. Its 5-model
+rank-average lands at 0.6365 Movie / 0.7437 VCBench versus the shipped ensemble
+CSV's 0.6354 / 0.7382 — ordinary library/BLAS drift. The results table below
+quotes the shipped ensemble; the figure recomputes and asserts both files at
+4 decimal places.
 
 ## Results
 
@@ -196,14 +220,15 @@ Things to know before you burn a day of compute:
 | `scripts/_runner_common.py` | Shared runner plumbing: dataset loading, splits, the answer-vector→score combiner, call estimates |
 | `scripts/run_all.sh` | Everything, sequentially, with preflight checks |
 | `scripts/calibrate_timings.py` | Throughput calibration on your machine → `precomputed/timings.json` |
-| `scripts/make_hero_figure.py` | Regenerates `figures/time_vs_score.{png,svg}` from `precomputed/` |
+| `scripts/make_hero_figure.py` | Regenerates both charts in `figures/` from `precomputed/` |
+| `scripts/make_permodel_scores.py` | Regenerates the per-model traditional CSVs the charts' lines come from (needs the raw datasets) |
 | `scripts/run_movie_*.sh`, `kickoff_movie_all.sh`, `check_movie_progress.sh` | Maintainer scripts that produced the shipped Movie artifacts (reference machine only) |
 | `src/llm.py` | The LLM factory every runner and notebook goes through — `get_local_llm()` |
 | `src/disk_cache.py` | Restart-safe per-call JSONL cache, temperature-aware |
 | `src/logprobs_llm_shim.py` | Pre-PR-#81 adapter: chat-completions + logprobs against Ollama |
-| `precomputed/` | Reference score CSVs (the results table) + `timings.json` |
+| `precomputed/` | Reference score CSVs (the results table + the per-model traditional refit) + `timings.json` |
 | `models/` | The trained, PII-vetted model bundles the notebooks open |
-| `figures/` | The hero chart, regenerable from `scripts/make_hero_figure.py` |
+| `figures/` | The two charts, regenerable from `scripts/make_hero_figure.py` |
 
 Two deliberate asymmetries in `models/`, so they don't read as oversights:
 VCBench's RRM bundle ships with its raw rules emptied (they can quote training
@@ -211,8 +236,8 @@ prose; predict uses only the compiled policy + calibrator), while Movie's keeps
 all 346 rules — they are mined aggregates over public plot summaries and the
 most legible teaching artifact in the example. And held-out splits
 (`vcbench_private_*`, `movie_test_*`) ship scores without labels; Movie test
-labels come from `movie_test_traditional_scores.csv`, the one shipped file that
-carries them.
+labels come from `movie_test_traditional_scores.csv` and its `_permodel_`
+sibling, the only shipped files that carry them.
 
 ## Why the shim?
 
@@ -244,6 +269,11 @@ export OPENAI_BASE_URL=http://localhost:11434/v1   # the default
 - PI and RRF ship one score per row, produced by collapsing their per-policy /
   per-question answer vectors with an out-of-fold logistic combiner
   (`_runner_common.py` has the exact operator).
+- `*_traditional_scores.csv` carries the 5-model rank-average ensemble (the
+  results table); `*_traditional_permodel_scores.csv` carries one probability
+  column per traditional model — the suite's five plus the decision tree and
+  k-NN the hero chart draws — from `scripts/make_permodel_scores.py`'s refit
+  (see the hero-chart section for the small ensemble drift between the two).
 
 ## Cloud reference (optional)
 
