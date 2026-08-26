@@ -23,7 +23,9 @@ Usage — smoke test against a running Ollama (~10 minutes):
 Usage — full Movie run (fit on 346 films, score 2,188; hours, see the banner):
     caffeinate -i python run_rrm.py --dataset movie
 
-Usage — full VCBench run (needs the CSV from vcbench.com):
+Usage — full VCBench run (needs the CSV from vcbench.com; fits on a
+stratified 350 by default — see FIT_SIZES below for why, and for how the
+shipped reference bundle differs):
     VCBENCH_DATA=~/.trl-data/vcbench/vcbench_final_public.csv \\
       caffeinate -i python run_rrm.py --dataset vcbench
 
@@ -64,8 +66,16 @@ TASK_DESCRIPTIONS = {
     ),
 }
 
-# Stratified fit sizes used for the shipped bundles.
-FIT_SIZES = {"vcbench": 0, "movie": 346}
+# Stratified fit-size defaults. Movie matches its shipped bundle. VCBench is
+# capped at 350 because Stage 1 (one long reasoning-log generation per fit
+# row) runs ~10x slower than the blended s/call the banner quotes — measured
+# ~23 s/call on this model — so mining cost is linear in fit size and
+# fit-on-everything is a multi-day trap on 4,500 rows. The shipped VCBench
+# reference bundle predates this cap and was fit on the full public split;
+# pass `--fit-size 0` to reproduce that configuration (Stage 1 alone is then
+# ~29 h). The mid-run ETA extrapolates one blended rate, so expect it to be
+# very pessimistic during Stage 1 and to fall quickly afterwards.
+FIT_SIZES = {"vcbench": 350, "movie": 346}
 
 MAX_YES_RULES, MAX_NO_RULES = 100, 300
 

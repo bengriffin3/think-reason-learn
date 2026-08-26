@@ -170,7 +170,20 @@ The call counts are arithmetic from each runner's defaults and are
 machine-independent; the hours are `s_per_call × calls`. A full VCBench public
 run was never timed — projecting the same rates over its call counts gives
 roughly GPTree 20 h · PI 24 h · RRM 28 h · RRF 72 h (fit and score all 4,500
-rows; treat these as order-of-magnitude).
+rows; treat these as order-of-magnitude). Two things the playground
+verification runs (2026-08-25) taught us about those projections:
+
+- **GPTree's rate held up**: fitting and scoring n=1,500 took 6.4–6.7 h,
+  within a few percent of what the projection implies.
+- **RRM's blended s/call hides a slow phase.** Its Stage 1 generates one long
+  reasoning log per *fit* row and measured **~23 s/call** — nearly 10× the
+  blended rate — so mining cost is linear in fit size, and at the old
+  fit-on-everything default, Stage 1 alone on 4,500 rows would be ~29 h. The
+  VCBench runner now defaults to a stratified fit of 350 (like Movie's 346);
+  the shipped reference bundle predates the cap and used the full split
+  (`--fit-size 0` reproduces it, at that cost). The runners' mid-run ETA
+  extrapolates one blended rate, so during RRM's Stage 1 it over-estimates
+  wildly and then falls fast — don't kill a run because of it.
 
 - Start with notebook 01; it needs none of this.
 - Every long run is restart-safe: per-call responses are cached to a JSONL on
@@ -182,6 +195,67 @@ rows; treat these as order-of-magnitude).
   banner then quotes your own numbers. Its default slice is n=100 per method
   (the committed file was measured at n=100 for PI/RRF/GPTree and n=10 for RRM,
   merged — the file-level `n_calibration` field records the last run's slice).
+
+## The playground: VCBench at 1/3 the size
+
+Full VCBench runs cost tens of hours, so the example ships a **playground**: a
+fixed 1,500-founder subsample of the public split (135 positives — the same 9%
+base rate), chosen so the findings you'd care about reproduce on it. Build it
+from your VCBench download and point any runner at it:
+
+```bash
+python scripts/make_playground.py --data "$VCBENCH_DATA"
+python scripts/run_gptree.py --dataset vcbench --data results/playground_records.csv
+```
+
+A full four-method playground run projects to ~15–20 h instead of ~70+ (GPTree
+measured 6.4–6.7 h; RRM ~2.7 h at its fit-350 default; PI/RRF projected ~5 h /
+~16 h). The traditional baseline is under a minute.
+
+**How the size was chosen.** `scripts/playground_sizing_analysis.py`
+(seeded, reads only `precomputed/`) subsamples the public 4,500 two thousand
+times per candidate size and measures how often each full-set conclusion
+reproduces. At n=1,500 the combined-ensemble thesis reproduces in ~98% of
+random draws and the four core conclusions jointly in ~69%; pushing the joint
+figure to 90% would need n≈2,400, most of the dataset. The shipped sample is a
+label-stratified, embedding-cluster-balanced draw — selected without looking
+at any method's scores, then validated — whose refit behaviour sits at the
+median of eleven such candidates.
+
+**What to expect when you run it** — `playground/reference.json` holds the
+maintainer reference, recomputed and asserted by
+`scripts/playground_reference.py`:
+
+| Series (ROC-AUC) | full 4,500 | playground, refit |
+|---|---:|---:|
+| Reasoning ensemble | 0.7188 | 0.7075 |
+| Traditional ensemble | 0.7437 | 0.7050 |
+| **Combined** | **0.7632** | **0.7409** |
+
+Refit numbers are *systematically lower* than the full-benchmark reference:
+models fit on 1,500 rows learn less. The verification runs measured −0.02 to
+−0.06 ROC-AUC per refit model, and traditional models pay more of that price
+than the reasoning methods (PI and RRF fit on fixed tiny samples — 10-row
+context batches, 40 labelled examples — so shrinking the dataset barely
+touches them).
+
+**What carries over, verified end-to-end** (GPTree and RRM actually refit on
+the playground, twice, on two independently drawn samples): the combined
+ensemble beats both families on ROC *and* PR-AUC; the reasoning ensemble beats
+every interpretable traditional model; GPTree is the weakest single method.
+**What deliberately does not**: the full-benchmark result that the traditional
+ensemble edges the reasoning ensemble — on the playground the two families
+tie (refitting hurts the label-only learners more), so treat any
+family-vs-family margin you see here as noise; exact method rankings (PI vs
+RRM vs RRF are within ~0.01 of each other); and PR-AUC margins generally, with
+only ~135 positives. If your new method beats the combined ensemble here by
+less than ~0.03 ROC-AUC, confirm on the full split before believing it.
+
+Two mechanical notes: GPTree leaves some rows unscored (91 of 1,500 in the
+reference run — rows its tree cannot route to a leaf); the reference
+median-imputes them before ensembling. And the playground refit reference for
+GPTree/RRM ships in `playground/*_refit_scores.csv`, so you can compare your
+own refit run founder-by-founder, not just by headline number.
 
 ## Running the methods yourself
 
@@ -222,11 +296,15 @@ Things to know before you burn a day of compute:
 | `scripts/calibrate_timings.py` | Throughput calibration on your machine → `precomputed/timings.json` |
 | `scripts/make_hero_figure.py` | Regenerates both charts in `figures/` from `precomputed/` |
 | `scripts/make_permodel_scores.py` | Regenerates the per-model traditional CSVs the charts' lines come from (needs the raw datasets) |
+| `scripts/make_playground.py` | Slices your VCBench download to the fixed 1,500-founder playground |
+| `scripts/playground_reference.py` | Recomputes + asserts `playground/reference.json` from committed CSVs |
+| `scripts/playground_sizing_analysis.py` | The seeded Monte Carlo behind the playground's size |
 | `scripts/run_movie_*.sh`, `kickoff_movie_all.sh`, `check_movie_progress.sh` | Maintainer scripts that produced the shipped Movie artifacts (reference machine only) |
 | `src/llm.py` | The LLM factory every runner and notebook goes through — `get_local_llm()` |
 | `src/disk_cache.py` | Restart-safe per-call JSONL cache, temperature-aware |
 | `src/logprobs_llm_shim.py` | Pre-PR-#81 adapter: chat-completions + logprobs against Ollama |
 | `precomputed/` | Reference score CSVs (the results table + the per-model traditional refit) + `timings.json` |
+| `playground/` | The 1,500-founder playground: id list, refit reference scores, `reference.json` |
 | `models/` | The trained, PII-vetted model bundles the notebooks open |
 | `figures/` | The two charts, regenerable from `scripts/make_hero_figure.py` |
 

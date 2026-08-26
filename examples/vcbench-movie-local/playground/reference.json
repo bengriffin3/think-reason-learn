@@ -1,0 +1,82 @@
+{
+  "n": 1500,
+  "n_pos": 135,
+  "gptree_unscored_rows": 91,
+  "refit_runs": "GPTree fit 1,500 / RRM fit 350, qwen2.5-coder:14b, 2026-08-25",
+  "evalonly": {
+    "roc_auc": {
+      "pi": 0.6975,
+      "rrf": 0.683,
+      "gptree": 0.6305,
+      "rrm": 0.6669,
+      "lr": 0.7051,
+      "hgb": 0.7058,
+      "rf": 0.7323,
+      "et": 0.7285,
+      "gnb": 0.6019,
+      "dt": 0.6395,
+      "knn": 0.6983,
+      "reasoning_ens": 0.738,
+      "trad_ens": 0.7524,
+      "combined": 0.7789
+    },
+    "pr_auc": {
+      "pi": 0.1992,
+      "rrf": 0.1956,
+      "gptree": 0.1404,
+      "rrm": 0.1673,
+      "lr": 0.1683,
+      "hgb": 0.1902,
+      "rf": 0.2193,
+      "et": 0.2137,
+      "gnb": 0.1125,
+      "dt": 0.1474,
+      "knn": 0.1728,
+      "reasoning_ens": 0.2383,
+      "trad_ens": 0.2239,
+      "combined": 0.2766
+    }
+  },
+  "intern": {
+    "roc_auc": {
+      "pi": 0.6975,
+      "rrf": 0.683,
+      "gptree": 0.58,
+      "rrm": 0.6034,
+      "lr": 0.6611,
+      "hgb": 0.6884,
+      "rf": 0.6985,
+      "et": 0.6858,
+      "gnb": 0.549,
+      "dt": 0.5898,
+      "knn": 0.6459,
+      "reasoning_ens": 0.7075,
+      "trad_ens": 0.705,
+      "combined": 0.7409
+    },
+    "pr_auc": {
+      "pi": 0.1992,
+      "rrf": 0.1956,
+      "gptree": 0.1159,
+      "rrm": 0.1411,
+      "lr": 0.1419,
+      "hgb": 0.2006,
+      "rf": 0.1903,
+      "et": 0.1764,
+      "gnb": 0.1003,
+      "dt": 0.1168,
+      "knn": 0.138,
+      "reasoning_ens": 0.1987,
+      "trad_ens": 0.171,
+      "combined": 0.2252
+    }
+  },
+  "conclusions_intern_view": {
+    "ROC: combined > trad ens": true,
+    "ROC: combined > reasoning ens": true,
+    "ROC: reasoning ens > every interpretable": true,
+    "ROC: trad ens > reasoning ens (full-benchmark claim)": false,
+    "PR: combined > trad ens": true,
+    "PR: combined > reasoning ens": true
+  }
+}
